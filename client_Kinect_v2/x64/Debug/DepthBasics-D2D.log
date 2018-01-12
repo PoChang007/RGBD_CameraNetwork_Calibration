@@ -1,0 +1,14 @@
+﻿Build started 2015/2/4 16:32:26.
+     1>Project "C:\Users\wxu\Desktop\New folder (2)\New folder (3)\New folder\client1\DepthBasics-D2D.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\x86_amd64\CL.exe /c /Zi /nologo /W1 /WX- /Od /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"x64\Debug\\" /Fd"x64\Debug\vc120.pdb" /Gd /TP /errorReport:prompt Microsoft_grabber2.cpp OpenCV_Kinect2SDK.cpp
+         OpenCV_Kinect2SDK.cpp
+     1>C:\opencv\opencv\include\opencv2/opencv.hpp(46): fatal error C1083: Cannot open include file: 'opencv2/core/core_c.h': No such file or directory
+         Microsoft_grabber2.cpp
+     1>C:\opencv\opencv\include\opencv2/opencv.hpp(46): fatal error C1083: Cannot open include file: 'opencv2/core/core_c.h': No such file or directory
+         Generating Code...
+     1>Done Building Project "C:\Users\wxu\Desktop\New folder (2)\New folder (3)\New folder\client1\DepthBasics-D2D.vcxproj" (Build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:01.97

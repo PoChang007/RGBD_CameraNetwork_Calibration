@@ -1,0 +1,21 @@
+﻿Build started 1/12/2018 7:10:42 PM.
+     1>Project "C:\Users\Po-Chang Su\Desktop\GitHub\serverf3d 4 Kinect_v2\DepthBasics-D2D.vcxproj" on node 2 (Rebuild target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /IC:\OpenCV2.4.10\build\include\opencv2 /IC:\OpenCV2.4.10\build\include\opencv /IC:\OpenCV2.4.10\build\include\ /Zi /nologo /W1 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt DepthCodec.cpp main.cpp RemoteKinect.cpp UnityIPCManager.cpp
+         DepthCodec.cpp
+         main.cpp
+         RemoteKinect.cpp
+         UnityIPCManager.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Po-Chang Su\Desktop\GitHub\serverf3d 4 Kinect_v2\Release\DepthBasics-D2D.exe" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\OpenCV2.4.10\build\x86\vc12\lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib opencv_core2410.lib opencv_imgproc2410.lib opencv_highgui2410.lib opencv_ml2410.lib opencv_video2410.lib opencv_features2d2410.lib opencv_calib3d2410.lib opencv_objdetect2410.lib opencv_contrib2410.lib opencv_flann2410.lib opencv_legacy2410.lib opencv_photo2410.lib ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\Po-Chang Su\Desktop\GitHub\serverf3d 4 Kinect_v2\Release\DepthBasics-D2D.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Po-Chang Su\Desktop\GitHub\serverf3d 4 Kinect_v2\Release\DepthBasics-D2D.lib" /MACHINE:X86 /SAFESEH Release\DepthCodec.obj
+         Release\main.obj
+         Release\RemoteKinect.obj
+         Release\UnityIPCManager.obj
+         Generating code
+         Finished generating code
+         DepthBasics-D2D.vcxproj -> C:\Users\Po-Chang Su\Desktop\GitHub\serverf3d 4 Kinect_v2\Release\DepthBasics-D2D.exe
+     1>Done Building Project "C:\Users\Po-Chang Su\Desktop\GitHub\serverf3d 4 Kinect_v2\DepthBasics-D2D.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:05.58
