@@ -1,4 +1,4 @@
-// Copyright 2017 University of Kentucky 
+// Copyright 2017 University of Kentucky
 // Aly Shehata
 
 #pragma once
@@ -20,4 +20,3 @@ private:
 	string myPipeName;
 	HANDLE pipeHandle;
 };
-
