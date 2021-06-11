@@ -1,11 +1,10 @@
-// Copyright 2017 University of Kentucky 
+// Copyright 2017 University of Kentucky
 // Po-Chang Su, Ju Shen, Wanxin Xu, Sen-ching Samson Cheung, Ying Luo
 
 #ifndef RemoteKinect_H_
 #define RemoteKinect_H_
 
 #include <vector>
-
 //#include <winsock2.h>
 #include <windows.h>
 #include <fcntl.h>
@@ -15,12 +14,13 @@
 #include <stdio.h>
 #include <conio.h>
 #include <cv.h>
-#include <highgui.h>  
+#include <highgui.h>
 #include <cxcore.h>
 
 #include "DepthCodec.h"
 typedef unsigned long long int uint64_t;
 typedef signed long long int int64_t;
+
 //////////////////////////////////////////////////////////
 // Class RemoteKinect
 //
@@ -34,8 +34,8 @@ typedef signed long long int int64_t;
 // // RemoteKinect requires the depth compression codec
 // xn::Codec depthCodec;
 // // ... need initialization ...
-// 
-// // Say you have 3 kinects; initialize them with the IP address and port of 
+//
+// // Say you have 3 kinects; initialize them with the IP address and port of
 // // of the machines with kinects, as well as the depth compressor
 // static const int numKinectMachines = 3;
 // RemoteKinect kinectMachines[numKinectMachines] = {
@@ -49,11 +49,9 @@ typedef signed long long int int64_t;
 // while (1) {
 //   // startTransfer is a non-blocking call that initiates the transfer
 //   // in a separate thread
-//   if (frameNo==0) 
+//   if (frameNo==0)
 //      if ((status=kinectMachines[0].startTransfer()) != 0)
 //        fprintf(stderr,"Problem with Kinect 0\n");
-//
-//   
 //
 //   // Inner loop over every kinect
 //   cv::Mat RGBframe, Depthframe;
@@ -67,7 +65,7 @@ typedef signed long long int int64_t;
 //     // start the transfer from the next machine while working on the
 //     // the data from the current one
 //     kinectMachines[(i+1)%numKinectMachines].startTransfer();
-//     
+//
 //     // Problem with this kinect, move on to the next one.
 //     if (status != 0) continue;
 //     // .... Process RGBframe and Depthframe ...
@@ -76,56 +74,54 @@ typedef signed long long int int64_t;
 //   frameNo++;
 // }
 
-class RemoteKinect {
+class RemoteKinect
+{
 
 public:
-
-	// constructor 
-	// The constructor initiates the IP connection. If it is successful, then 
+	// constructor
+	// The constructor initiates the IP connection. If it is successful, then
 	// it will allocate necessary memory space for network transmission
 	RemoteKinect(char *ipAddr, int port = 3000);
-	
+
 	// destructor
 	// Cleanup : kill thread, send 9999 (unsigned long) to server to kill process
 	// close socket
 	virtual ~RemoteKinect();
 
 	// startTransfer
-	// It is a non-blocking call that starts a thread to grab the next 
+	// It is a non-blocking call that starts a thread to grab the next
 	// color and depth images from the remote kinect. It returns 0 if okay
-	// or negative error codes based on the types of problems. 
+	// or negative error codes based on the types of problems.
 	int startTransfer();
 
 	// getData
 	// It is a blocking call that retrieves the actual color and depth images.
-	// It returns 0 if okay or negative error codes based on the types of 
+	// It returns 0 if okay or negative error codes based on the types of
 	// problems.
-	int getData(cv::Mat &RGBframe, /*cv::Mat &depthframe,*/ cv::Mat &pointcloudX_frame, cv::Mat &pointcloudY_frame, cv::Mat &pointcloudZ_frame/*, std::vector<int64_t> &cloudFrame*/);
+	int getData(cv::Mat &RGBframe, /*cv::Mat &depthframe,*/ cv::Mat &pointcloudX_frame, cv::Mat &pointcloudY_frame, cv::Mat &pointcloudZ_frame /*, std::vector<int64_t> &cloudFrame*/);
 
 	void passEyeCenter(cv::Mat toServer); //used to send server eye center to different clients, each client call this function once
-	void recieveEyeCenter(char* data); //used to recieve detected eye center from each client
-	cv::Mat getRecievedEyeCenter();  //used in the main function, it will be called by each client
+	void recieveEyeCenter(char *data);	  //used to recieve detected eye center from each client
+	cv::Mat getRecievedEyeCenter();		  //used in the main function, it will be called by each client
 	void setSaveSignal();
-	void setCalibConnectionSignal(); //control calibration capturing procedure
+	void setCalibConnectionSignal();   //control calibration capturing procedure
 	void setPathTrackingSignal(int x); //control calibration tracking procedure
 	int getPathTrackingSignal();
 
 	short int calib_conn[3];
-
-	
 	cv::Mat _pathMat;
 
 protected:
-	int _status;      // Current status of the connection
-	int _hsock;       // Socket for communication
-	HANDLE _thread;   // thread created by getData
-	bool _threadRunning; // True if there is a thread running
-	DepthCodec _depthCodec; // For decompressing the depth bitstream
+	int _status;				   // Current status of the connection
+	int _hsock;					   // Socket for communication
+	HANDLE _thread;				   // thread created by getData
+	bool _threadRunning;		   // True if there is a thread running
+	DepthCodec _depthCodec;		   // For decompressing the depth bitstream
 	DepthCodec _pointcloudX_Codec; // For decompressing the Point Cloud X bitstream
 	DepthCodec _pointcloudY_Codec; // For decompressing the Point Cloud Y bitstream
 	DepthCodec _pointcloudZ_Codec; // For decompressing the Point Cloud Z bitstream
 
-	// Buffer 
+	// Buffer
 	cv::Mat _RGBFrame;
 	cv::Mat _depthFrame;
 	cv::Mat _pointcloudX_Frame;
@@ -138,23 +134,17 @@ protected:
 	cv::Mat _pointcloudZ_dataBuffer;
 	std::vector<int64_t> _cloudBuffer;
 
-
 	/*For eye center use*/
 	cv::Mat local_eye_center;
 	cv::Mat recieved_eye_center;
 
-
 	/*For instruction to clients use*/
 	unsigned long save_img_signal;
 
-
 	/*bitstream for eye_center*/
-	char *centerStream; //for sending
-	char* eye_center_buf; //for recieving
+	char *centerStream;	  //for sending
+	char *eye_center_buf; //for recieving
 	unsigned long centerSize;
-
-
-
 
 	// getRemoteData
 	// This is the real work behind getData following this protocol
