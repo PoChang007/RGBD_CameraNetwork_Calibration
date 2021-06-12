@@ -1,4 +1,4 @@
-# RGBD Camera Network Calibration
+# RGB-D Camera Network Calibration
 
 ## ToDo
 

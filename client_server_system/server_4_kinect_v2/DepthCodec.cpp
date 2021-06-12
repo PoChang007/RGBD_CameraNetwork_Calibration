@@ -1,22 +1,22 @@
-// Copyright 2017 University of Kentucky 
+// Copyright 2017 University of Kentucky
 // Po-Chang Su, Ju Shen, Wanxin Xu, Sen-ching Samson Cheung, Ying Luo
 
 #include "DepthCodec.h"
 
-#define XN_MAX_UINT16  65535
+#define XN_MAX_UINT16 65535
 
 // Obtained by running xn::DepthGenerator.GetDeviceMaxDepth() on an actual kinect
-#define KINECT_MAX_DEPTH 10000  
+#define KINECT_MAX_DEPTH 10000
 
-int  DepthCodec::encode(const unsigned short* pInput,
-	const unsigned long nInputSize,
-	unsigned char* pOutput,
-	unsigned long* pnOutputSize)
+int DepthCodec::encode(const unsigned short *pInput,
+					   const unsigned long nInputSize,
+					   unsigned char *pOutput,
+					   unsigned long *pnOutputSize)
 {
 	// Local function variables
-	const unsigned short* pInputEnd = pInput + (nInputSize / sizeof(unsigned short));
-	const unsigned short* pOrigInput = pInput;
-	const unsigned char* pOrigOutput = pOutput;
+	const unsigned short *pInputEnd = pInput + (nInputSize / sizeof(unsigned short));
+	const unsigned short *pOrigInput = pInput;
+	const unsigned char *pOrigOutput = pOutput;
 	unsigned short nCurrValue = 0;
 	unsigned short nLastValue = 0;
 	unsigned short nAbsDiffValue = 0;
@@ -37,8 +37,8 @@ int  DepthCodec::encode(const unsigned short* pInput,
 
 	// Create the embedded value translation table...
 	pOutput += 2;
-	for (int i = 0; i<XN_MAX_UINT16; i++) nEmbTable[i] = 0;
-	//	xnOSMemSet(&nEmbTable[0], 0, nMaxValue*sizeof(unsigned short));
+	for (int i = 0; i < XN_MAX_UINT16; i++) nEmbTable[i] = 0;
+	// xnOSMemSet(&nEmbTable[0], 0, nMaxValue*sizeof(unsigned short));
 
 	while (pInput != pInputEnd)
 	{
@@ -46,23 +46,23 @@ int  DepthCodec::encode(const unsigned short* pInput,
 		pInput++;
 	}
 
-	for (unsigned long i = 0; i<XN_MAX_UINT16; i++)
+	for (unsigned long i = 0; i < XN_MAX_UINT16; i++)
 	{
 		if (nEmbTable[i] == 1)
 		{
 			nEmbTable[i] = nEmbTableIdx;
 			nEmbTableIdx++;
-			*(unsigned short*)pOutput = unsigned short(i);
+			*(unsigned short *)pOutput = unsigned short(i);
 			pOutput += 2;
 		}
 	}
 
-	*(unsigned short*)(pOrigOutput) = nEmbTableIdx;
+	*(unsigned short *)(pOrigOutput) = nEmbTableIdx;
 
 	// Encode the data...
 	pInput = pOrigInput;
 	nLastValue = nEmbTable[*pInput];
-	*(unsigned short*)pOutput = nLastValue;
+	*(unsigned short *)pOutput = nLastValue;
 	//*(unsigned short*)pOutput = XN_PREPARE_VAR16_IN_BUFFER(nLastValue);
 	pInput++;
 	pOutput += 2;
@@ -70,13 +70,11 @@ int  DepthCodec::encode(const unsigned short* pInput,
 	// 	for (unsigned long i = 0; i < nEmbTableIdx; i++)
 	// 		nEmbTable[i] = XN_PREPARE_VAR16_IN_BUFFER(nEmbTable[i]);
 
-
 	while (pInput < pInputEnd)
 	{
 		nCurrValue = nEmbTable[*pInput];
-
 		nDiffValue = (nLastValue - nCurrValue);
-		nAbsDiffValue = ((nDiffValue>0) ? nDiffValue : (-nDiffValue));
+		nAbsDiffValue = ((nDiffValue > 0) ? nDiffValue : (-nDiffValue));
 
 		if (nAbsDiffValue <= 6)
 		{
@@ -85,7 +83,6 @@ int  DepthCodec::encode(const unsigned short* pInput,
 			if (cOutStage == 0)
 			{
 				cOutChar = nDiffValue << 4;
-
 				cOutStage = 1;
 			}
 			else
@@ -117,7 +114,6 @@ int  DepthCodec::encode(const unsigned short* pInput,
 					*pOutput = cOutChar;
 					pOutput++;
 				}
-
 				cOutStage = 0;
 			}
 		}
@@ -153,7 +149,7 @@ int  DepthCodec::encode(const unsigned short* pInput,
 			}
 			else
 			{
-				*(unsigned short*)pOutput = (nCurrValue << 8) + (nCurrValue >> 8);
+				*(unsigned short *)pOutput = (nCurrValue << 8) + (nCurrValue >> 8);
 				// *(unsigned short*)pOutput = XN_PREPARE_VAR16_IN_BUFFER((nCurrValue << 8) + (nCurrValue >> 8));
 				pOutput += 2;
 			}
@@ -182,23 +178,22 @@ int  DepthCodec::encode(const unsigned short* pInput,
 	return 0;
 }
 
-
-int DepthCodec::decode(const unsigned char* pInput,
-	const unsigned long nInputSize,
-	unsigned short* pOutput,
-	unsigned long* pnOutputSize)
+int DepthCodec::decode(const unsigned char *pInput,
+					   const unsigned long nInputSize,
+					   unsigned short *pOutput,
+					   unsigned long *pnOutputSize)
 {
 	// Local function variables
-	const unsigned char* pInputEnd = pInput + nInputSize;
-	unsigned short* pOutputEnd = 0;
-	unsigned short* pOrigOutput = pOutput;
+	const unsigned char *pInputEnd = pInput + nInputSize;
+	unsigned short *pOutputEnd = 0;
+	unsigned short *pOrigOutput = pOutput;
 	unsigned short nLastFullValue = 0;
 	unsigned char cInput = 0;
 	unsigned char cZeroCounter = 0;
 	char cInData1 = 0;
 	char cInData2 = 0;
 	unsigned char cInData3 = 0;
-	unsigned short* pEmbTable = NULL;
+	unsigned short *pEmbTable = NULL;
 	unsigned short nEmbTableIdx = 0;
 
 	// Validate the input/output pointers (to make sure none of them is NULL)
@@ -211,10 +206,10 @@ int DepthCodec::decode(const unsigned char* pInput,
 	//		return (XN_STATUS_BAD_PARAM);
 	//}
 
-	nEmbTableIdx = *(unsigned short*)pInput;
+	nEmbTableIdx = *(unsigned short *)pInput;
 	// nEmbTableIdx = XN_PREPARE_VAR16_IN_BUFFER(*(unsigned short*)pInput);
 	pInput += 2;
-	pEmbTable = (unsigned short*)pInput;
+	pEmbTable = (unsigned short *)pInput;
 	pInput += nEmbTableIdx * 2;
 	//for (unsigned long i = 0; i < nEmbTableIdx; i++) {
 	// pEmbTable[i] = XN_PREPARE_VAR16_IN_BUFFER(pEmbTable[i]);
@@ -223,7 +218,7 @@ int DepthCodec::decode(const unsigned char* pInput,
 	pOutputEnd = pOutput + (*pnOutputSize / sizeof(unsigned short));
 
 	// Decode the data...
-	nLastFullValue = *(unsigned short*)pInput;
+	nLastFullValue = *(unsigned short *)pInput;
 	// nLastFullValue = XN_PREPARE_VAR16_IN_BUFFER(*(unsigned short*)pInput);
 	*pOutput = pEmbTable[nLastFullValue];
 	pInput += 2;
@@ -265,7 +260,8 @@ int DepthCodec::decode(const unsigned char* pInput,
 				if (cInData3 & 0x80)
 				{
 					nLastFullValue -= (cInData3 - 192);
-					if (pOutput > pOutputEnd) return -1;
+					if (pOutput > pOutputEnd)
+						return -1;
 					//XN_CHECK_OUTPUT_OVERFLOW(pOutput, pOutputEnd);
 					*pOutput = pEmbTable[nLastFullValue];
 
@@ -295,7 +291,8 @@ int DepthCodec::decode(const unsigned char* pInput,
 			if (cInData3 & 0x80)
 			{
 				nLastFullValue -= (cInData3 - 192);
-				if (pOutput > pOutputEnd) return -1;
+				if (pOutput > pOutputEnd)
+					return -1;
 				//XN_CHECK_OUTPUT_OVERFLOW(pOutput, pOutputEnd);
 				*pOutput = pEmbTable[nLastFullValue];
 
@@ -331,7 +328,6 @@ int DepthCodec::decode(const unsigned char* pInput,
 
 				cZeroCounter--;
 			}
-
 			pInput++;
 		}
 	}
@@ -342,4 +338,3 @@ int DepthCodec::decode(const unsigned char* pInput,
 	//return (XN_STATUS_OK);
 	return 0;
 }
-
