@@ -14,13 +14,13 @@
 #include "Functions.h"
 #include "Quaternion.h"
 #include "UnityIPCManager.h"
+
 const GLfloat origin_to_center = 2.5f;
 int mousex, mousey, m_zoom, m_mode;
 float camDist = 5.f, camDistd;
 Quaternion qDown, qNow;
 bool cam_flag[5] = {0, 1, 1, 1, 1}, file_pause = 0;
 unsigned int index = 0;
-cv::Mat test_img;
 int save_img = 0;
 std::vector<cv::Point3f> dpc;
 
@@ -127,11 +127,7 @@ void OpenGL_keyStroke(unsigned char key, int x, int y)
 			printf("sent save singal to Client4\n");
 		}
 #endif
-		/*Save final image locally*/
-		/*temp_file = server_file_name;
-		temp_file.append(to_string(img_index)).append(".jpg");
-		cv::imwrite(to_char(temp_file), virimg);
-		img_index++;*/
+
 		break;
 	case 'c':
 		/*Let clients stop/start calibration*/
@@ -252,15 +248,13 @@ void OpenGL_mouseMove(int button, int state, int x, int y)
 
 void OpenGL_init(void)
 {
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // background color: white
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glShadeModel(GL_FLAT);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
 
 	fprintf(stderr, "Connect to remote client ...");
 
-	//cv::namedWindow("Final Virtual");
-	test_img = cv::imread("img062.jpg");
 	initialize();
 }
 
@@ -271,11 +265,6 @@ void OpenGL_changeSize(int w, int h)
 	glLoadIdentity();
 	gluPerspective(60.0, (GLfloat)w / (GLfloat)h, 0.1f, 50.0f);
 	glMatrixMode(GL_MODELVIEW);
-}
-
-void calc_pointcloud(int camNum)
-{
-	inverseProject(RGBImage[camNum], depthImage[camNum], xyzImage[camNum]);
 }
 
 void OpenGL_render(void)
@@ -306,8 +295,7 @@ void OpenGL_render(void)
 		int status_2 = kinect_2.startTransfer();
 		if (index > 0)
 		{
-			//test->imageData = (char*)(depthImage_2.operator IplImage);
-			/*Do processing on images recieved from second kinect*/
+			/*Do processing on images received from second kinect*/
 		}
 		else
 		{
@@ -328,8 +316,7 @@ void OpenGL_render(void)
 		int status_3 = kinect_3.startTransfer();
 		if (index > 0)
 		{
-			//test->imageData = (char*)(depthImage_2.operator IplImage);
-			/*Do processing on images recieved from second kinect*/
+			/*Do processing on images received from third kinect*/
 		}
 		else
 		{
@@ -349,8 +336,7 @@ void OpenGL_render(void)
 		int status_4 = kinect_4.startTransfer();
 		if (index > 0)
 		{
-			//test->imageData = (char*)(depthImage_2.operator IplImage);
-			/*Do processing on images recieved from second kinect*/
+			/*Do processing on images received from fourth kinect*/
 		}
 		else
 		{
@@ -368,28 +354,27 @@ void OpenGL_render(void)
 	/*Step 2: Generate and dispaly virtual image from all clients*/
 	if (index > 0)
 	{
-		/*processImage();
-		cv::imshow("Final Virtual", virimg);*/
+		// processImage();
 	}
 
 	/*Step 3: Copy image data and used for next frame*/
-	kinect_1.getData(RGBImage[0], /*depthImage[0],*/ PointCloudX[0], PointCloudY[0], PointCloudZ[0] /*, kinect_1_cloud*/);
+	kinect_1.getData(RGBImage[0], PointCloudX[0], PointCloudY[0], PointCloudZ[0]);
 
 #ifdef CLIENT2
 	{
-		kinect_2.getData(RGBImage[1], /*depthImage[1],*/ PointCloudX[1], PointCloudY[1], PointCloudZ[1] /*, kinect_2_cloud*/);
+		kinect_2.getData(RGBImage[1], PointCloudX[1], PointCloudY[1], PointCloudZ[1]);
 	}
 #endif
 
 #ifdef CLIENT3
 	{
-		kinect_3.getData(RGBImage[2], /*depthImage[1],*/ PointCloudX[2], PointCloudY[2], PointCloudZ[2] /*, kinect_3_cloud*/);
+		kinect_3.getData(RGBImage[2], PointCloudX[2], PointCloudY[2], PointCloudZ[2]);
 	}
 #endif
 
 #ifdef CLIENT4
 	{
-		kinect_4.getData(RGBImage[3], /*depthImage[3],*/ PointCloudX[3], PointCloudY[3], PointCloudZ[3] /*, kinect_4_cloud*/);
+		kinect_4.getData(RGBImage[3], PointCloudX[3], PointCloudY[3], PointCloudZ[3]);
 	}
 #endif
 
@@ -439,7 +424,8 @@ void OpenGL_render(void)
 	}
 #endif
 
-	if (kinect_1.getPathTrackingSignal() == 1 && kinect_2.getPathTrackingSignal() == 1 && kinect_3.getPathTrackingSignal() == 1 && kinect_4.getPathTrackingSignal() == 1) //make sure the path tracking procedure is only excuted once
+    //make sure the path tracking procedure is only executed once
+	if (kinect_1.getPathTrackingSignal() == 1 && kinect_2.getPathTrackingSignal() == 1 && kinect_3.getPathTrackingSignal() == 1 && kinect_4.getPathTrackingSignal() == 1)
 	{
 		path_obtain_signal = 1;
 		kinect_1.setPathTrackingSignal(0);
@@ -695,7 +681,6 @@ void OpenGL_render(void)
 		pixels.clear();
 	}
 
-	//cloud.updataPointCloud();	// update next frame cloudpoint data
 	glPopMatrix();
 	glFinish();
 	//glFlush();
@@ -704,14 +689,8 @@ void OpenGL_render(void)
 
 int main(int argc, char **argv)
 {
-	/*Register Mouse operation*/
-	//cv::setMouseCallback("Final Virtual", onRGB1Mouse, 0);
-	//cv::setMouseCallback("virtual", onVirMouse, 0);
-
-	//initialize();
-
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA /*GLUT_DEPTH | GLUT_SINGLE | GLUT_RGBA*/);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
 	glutInitWindowSize(800, 600);
 	glutInitWindowPosition(200, 100);
 	glutCreateWindow("Kinect Point Cloud");

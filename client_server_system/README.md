@@ -4,9 +4,10 @@ For research purpose only.
 
 Environment:
 
+  * Windows 10
   * Visual Studio 2013 (release mode)
   * OpenCV 2.4.10 
   * Kinect v2 SDK
   * OpenGL
 
-For camera calibration, a sphere ball in yellow color is required. 
+For camera calibration, a sphere ball in yellow color is required.

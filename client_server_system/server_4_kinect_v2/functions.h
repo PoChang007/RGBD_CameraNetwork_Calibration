@@ -191,9 +191,6 @@ void initialize()
 /*for each round, renew the image*/
 void renewImage()
 {
-	//virimg = cv::Mat::zeros(HEIGHT1, WIDTH1, CV_8UC3);
-	//z_buffer = cv::Mat::zeros(HEIGHT1, WIDTH1, CV_32F);
-
 	//for (int i = 0; i < Client_Total; i++){
 	//	RGBImage[i] = cv::Mat::zeros(HEIGHT, WIDTH, CV_8UC1);
 	//	PointCloudX[i] = cv::Mat::zeros(HEIGHT, WIDTH, CV_16UC1);
@@ -202,45 +199,12 @@ void renewImage()
 	//}
 }
 
-void inverseProject(cv::Mat color, cv::Mat depth, cv::Mat &geometry_3D)
-{
-	for (int y = 0; y < depth.rows; y++)
-	{
-		short int *ptrDepth = depth.ptr<short int>(y);
-		for (int x = 0; x < depth.cols; x++)
-		{
-			int i = y * WIDTH + x;
-			if (ptrDepth[x] == 0)
-			{
-				float *ptrScalar = depth_pixels_scalar_tran.ptr<float>(i);
-				float *ptr_3d = geometry_3D.ptr<float>(i);
-
-				ptr_3d[0] = 0.0f;
-				ptr_3d[1] = 0.0f;
-				ptr_3d[2] = 0.0f;
-				ptr_3d[3] = 1.0f;
-			}
-			else
-			{
-				float *ptrScalar = depth_pixels_scalar_tran.ptr<float>(i);
-				float *ptr_3d = geometry_3D.ptr<float>(i);
-
-				ptr_3d[0] = (float)ptrScalar[0] * (float)ptrDepth[x];
-				ptr_3d[1] = (float)ptrScalar[1] * (float)ptrDepth[x];
-				ptr_3d[2] = (float)ptrDepth[x];
-				ptr_3d[3] = 1.0f;
-			}
-		}
-	}
-}
-
 /*get the center trajectories from 4 kinects*/
 void loadPath()
 {
 	int idx = 0;
 	while (!(path_mat[0].ptr<short int>(idx)[2] == 0))
 	{
-
 		for (int i = 0; i < Client_Total; i++)
 		{
 			coordinate coord;
@@ -251,7 +215,6 @@ void loadPath()
 
 			clients[i].coords.push_back(coord);
 		}
-
 		idx++;
 	}
 
