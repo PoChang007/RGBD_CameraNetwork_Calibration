@@ -11,3 +11,5 @@ Environment:
   * OpenGL
 
 For camera calibration, a sphere ball in yellow color is required.
+
+By default 4 cameras are used. The number of camera used in the camera network is scalable.
