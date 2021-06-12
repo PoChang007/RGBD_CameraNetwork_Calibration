@@ -152,7 +152,7 @@ int RemoteKinect::startTransfer()
 }
 
 // getData
-int RemoteKinect::getData(cv::Mat &RGBframe, /*cv::Mat &depthframe,*/ cv::Mat &pointcloudX_frame, cv::Mat &pointcloudY_frame, cv::Mat &pointcloudZ_frame /*, std::vector<int64_t> &cloudFrame*/)
+int RemoteKinect::getData(cv::Mat &RGBframe, cv::Mat &pointcloudX_frame, cv::Mat &pointcloudY_frame, cv::Mat &pointcloudZ_frame)
 {
 	if (_status < 0)
 		return _status;
@@ -167,13 +167,10 @@ int RemoteKinect::getData(cv::Mat &RGBframe, /*cv::Mat &depthframe,*/ cv::Mat &p
 	}
 	_threadRunning = false;
 
-	//RGBframe = cv::Mat::zeros(HEIGHT, WIDTH, CV_8UC1);
 	_RGBFrame.copyTo(RGBframe);
-	//_depthFrame.copyTo(depthframe);
 	_pointcloudX_Frame.copyTo(pointcloudX_frame);
 	_pointcloudY_Frame.copyTo(pointcloudY_frame);
 	_pointcloudZ_Frame.copyTo(pointcloudZ_frame);
-	//copy(_cloudBuffer.begin(), _cloudBuffer.end(), cloudFrame.begin());
 
 	return 0;
 }

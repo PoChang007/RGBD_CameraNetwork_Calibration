@@ -1,32 +1,38 @@
-// Copyright 2017 University of Kentucky 
+// Copyright 2017 University of Kentucky
 // Po-Chang Su, Ju Shen, Wanxin Xu, Sen-ching Samson Cheung, Ying Luo
 
 #ifndef __QUATERNION__
 #define __QUATERNION__
 
 #include <math.h>
-#define	TOLERANCE	0.00001f 
-#define PI			3.141592653589793238462643383279502884197169399375105820974944592
+#define TOLERANCE 0.00001f
+#define PI 3.141592653589793238462643383279502884197169399375105820974944592
 
-struct pt3D {
+struct pt3D
+{
 	float x, y, z;
-	pt3D() {
+	pt3D()
+	{
 		x = y = z = 0.0f;
 	}
-	pt3D(const pt3D &pt) {
+	pt3D(const pt3D &pt)
+	{
 		x = pt.x;
 		y = pt.y;
 		z = pt.z;
 	}
-	pt3D(float a, float b, float c) {
+	pt3D(float a, float b, float c)
+	{
 		x = a;
 		y = b;
 		z = c;
 	}
 
-	void normalize() {
-		float mag2 = x*x + y*y + z*z;
-		if (fabs(mag2) > TOLERANCE && fabs(mag2 - 1.0f) > TOLERANCE) {
+	void normalize()
+	{
+		float mag2 = x * x + y * y + z * z;
+		if (fabs(mag2) > TOLERANCE && fabs(mag2 - 1.0f) > TOLERANCE)
+		{
 			float mag = sqrt(mag2);
 			x /= mag;
 			y /= mag;
@@ -35,22 +41,27 @@ struct pt3D {
 	}
 };
 
-struct Quaternion {
+struct Quaternion
+{
 	float x, y, z, w;
-	Quaternion() {
+	Quaternion()
+	{
 		x = 0.0f;
 		y = z = 0.0f;
 		w = 1.0f;
 	}
-	Quaternion(float a, float b, float c, float d) {
+	Quaternion(float a, float b, float c, float d)
+	{
 		x = a;
 		y = b;
 		z = c;
 		w = d;
 	}
-	void normalize() {
-		float mag2 = w*w + x*x + y*y + z*z;
-		if(fabs(mag2) > TOLERANCE && fabs(mag2 - 1.0f) > TOLERANCE) {
+	void normalize()
+	{
+		float mag2 = w * w + x * x + y * y + z * z;
+		if (fabs(mag2) > TOLERANCE && fabs(mag2 - 1.0f) > TOLERANCE)
+		{
 			float mag = sqrt(mag2);
 			x /= mag;
 			y /= mag;
@@ -58,11 +69,12 @@ struct Quaternion {
 			w /= mag;
 		}
 	}
-	Quaternion getConjugate() {
+	Quaternion getConjugate()
+	{
 		return Quaternion(-x, -y, -z, w);
 	}
 
-	Quaternion Quaternion::operator* (const Quaternion &rq) 
+	Quaternion Quaternion::operator*(const Quaternion &rq)
 	{
 		// the constructor takes its arguments as (x, y, z, w)
 		return Quaternion(w * rq.x + x * rq.w + y * rq.z - z * rq.y,
@@ -72,7 +84,7 @@ struct Quaternion {
 	}
 
 	// Multiplying a quaternion q with a vector v applies the q-rotation to v
-	pt3D Quaternion::operator* (const pt3D &pt) 
+	pt3D Quaternion::operator*(const pt3D &pt)
 	{
 		pt3D vn(pt);
 		vn.normalize();
@@ -109,14 +121,15 @@ struct Quaternion {
 	void Quaternion::getAxisAngle(pt3D &axis, float &angle)
 	{
 		float scale = sqrt(x * x + y * y + z * z);
-		if(fabs(scale)<TOLERANCE)
+		if (fabs(scale) < TOLERANCE)
 		{
 			axis.x = 1.0f;
 			axis.y = 0.0f;
 			axis.z = 0.0f;
 			angle = 0.0f;
 		}
-		else {
+		else
+		{
 			axis.x = x / scale;
 			axis.y = y / scale;
 			axis.z = z / scale;
@@ -169,8 +182,7 @@ struct Quaternion {
 		float wz = w * z;
 
 		// This calculation would be a lot more complicated for non-unit length quaternions
-		// Note: The constructor of Matrix4 expects the Matrix in column-major format like expected by
-		//   OpenGL
+		// Note: The constructor of Matrix4 expects the Matrix in column-major format like expected by OpenGL
 		M[0] = 1.0f - 2.0f * (y2 + z2);
 		M[4] = 2.0f * (xy - wz);
 		M[8] = 2.0f * (xz + wy);
@@ -183,11 +195,11 @@ struct Quaternion {
 
 		M[2] = 2.0f * (xz - wy);
 		M[6] = 2.0f * (yz + wx);
-		M[10]= 1.0f - 2.0f * (x2 + y2);
-		M[14]= 0.0f;
-		
-		M[3]= M[7] = M[11] = 0.0f;
-		M[15]= 1.0f;
+		M[10] = 1.0f - 2.0f * (x2 + y2);
+		M[14] = 0.0f;
+
+		M[3] = M[7] = M[11] = 0.0f;
+		M[15] = 1.0f;
 	}
 };
 
