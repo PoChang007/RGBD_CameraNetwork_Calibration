@@ -1,4 +1,4 @@
-// Copyright 2017 University of Kentucky 
+// Copyright 2017 University of Kentucky
 // Po-Chang Su, Ju Shen, Wanxin Xu, Sen-ching Samson Cheung, Ying Luo
 
 #ifndef DepthCodec_H_
@@ -8,22 +8,22 @@
 
 #include <stdlib.h>
 
-class DepthCodec {
+class DepthCodec
+{
 public:
-
-	DepthCodec() {};
-	~DepthCodec() {};
+	DepthCodec(){};
+	~DepthCodec(){};
 
 	// Compression
 	// pInput       = Input Depth Data in raster order
 	// nInputSize   = Size of Input Depth Data in bytes
 	// pOutput      = Output compressed data (should allocate at least nInputSize bytes)
-	// pnOutputSize = Size of Output Compress Data in bytes 
+	// pnOutputSize = Size of Output Compress Data in bytes
 	// return 0 if okay, -1 otherwise
-	int  encode(const unsigned short* pInput,
-		const unsigned long nInputSize,
-		unsigned char* pOutput,
-		unsigned long* pnOutputSize);
+	int encode(const unsigned short *pInput,
+			   const unsigned long nInputSize,
+			   unsigned char *pOutput,
+			   unsigned long *pnOutputSize);
 
 	// Uncompression
 	// pInput       = Input Compressed Data
@@ -31,10 +31,9 @@ public:
 	// pOutput      = Output Depth Data (high and width must be determined as well)
 	// pnOutputSize = Size of Depth Data in bytes (need to set!)
 	// return 0 if okay, -1 otherwise
-	int  decode(const unsigned char* pInput,
-		const unsigned long nInputSize,
-		unsigned short* pOutput,
-		unsigned long* pnOutputSize);
-
+	int decode(const unsigned char *pInput,
+			   const unsigned long nInputSize,
+			   unsigned short *pOutput,
+			   unsigned long *pnOutputSize);
 };
 #endif
