@@ -140,7 +140,6 @@ void SaveKinectData::regionDetection(cv::Mat &left, int i)
 	/*store the result after applying threshold*/
 	//cv::inRange(l_hsv, cv::Scalar(10, 160, 150), cv::Scalar(80, 255, 255), l_thr);
 	cv::inRange(l_hsv, cv::Scalar(10, 130, 60), cv::Scalar(80, 255, 255), l_thr);
-	//cv::inRange(l_hsv, cv::Scalar(10, 160, 150), cv::Scalar(100, 255, 255), l_thr);
 
 	//cv::erode(l_thr, l_thr, cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(1, 1)));
 
@@ -174,10 +173,7 @@ void SaveKinectData::compute3Dpoints(cv::Mat &PointCloudX, cv::Mat &PointCloudY,
 		int x_2d = l_blob[i].x;
 		int y_2d = l_blob[i].y;
 
-		//int pt_index = y_2d * WIDTH + x_2d;
-
 		cv::Point3f pt;
-
 		pt.x = (float)PointCloudX.ptr<short int>(y_2d)[x_2d];
 		pt.y = (float)PointCloudY.ptr<short int>(y_2d)[x_2d];
 		pt.z = (float)PointCloudZ.ptr<short int>(y_2d)[x_2d];
@@ -186,9 +182,7 @@ void SaveKinectData::compute3Dpoints(cv::Mat &PointCloudX, cv::Mat &PointCloudY,
 		if (pt.z != 0)
 		{
 
-			if (pt.z < 3500) // for ICME paper
-			//if (pt.z < 5500) // large area: for camera next to wall
-			//if (pt.z < 2500) // telepresence paper
+			if (pt.z < 3500) // Threshold the maximum depth value (e.g. 2500, 5500, etc.)
 			{
 				l_pts.push_back(pt);
 
@@ -202,7 +196,6 @@ void SaveKinectData::compute3Dpoints(cv::Mat &PointCloudX, cv::Mat &PointCloudY,
 			}
 		}
 	}
-
 	out.close();
 }
 
@@ -210,7 +203,6 @@ void SaveKinectData::sphereFitting(int index)
 {
 	/* initialize random seed: */
 	int total = l_pts.size();
-
 	if (total > pt_rand)
 	{
 		r_pts = l_pts;
@@ -233,7 +225,6 @@ void SaveKinectData::sphereFitting(int index)
 				/*further refine the sphere center and radius by encompassing more points*/
 				sphereRefine(index);
 			}
-
 			random++;
 		}
 	}
@@ -524,7 +515,6 @@ void SaveKinectData::sphereTracking()
 void saveDepth(cv::Mat depth, char *filename)
 {
 	cv::Mat depth_jpg = cv::Mat::zeros(424, 512, CV_8UC1);
-
 	for (int y = 0; y < 424; y++)
 	{
 		for (int x = 0; x < 512; x++)
@@ -600,7 +590,7 @@ void SaveKinectData::StartCapturingInternal()
 				fwrite(Point_Cloud_Z.data, 2, HEIGHT * WIDTH, fpZ);
 				fclose(fpZ);
 
-				///*Save depth image*/
+				/*Save depth image*/
 				//sprintf(filename, "captured/kinect_%d_dep_%02d.dat", CLIENTID, save_index);
 				//fp = fopen(filename, "wb");
 				//fwrite(send_data.data, 2, HEIGHT*WIDTH, fp);
@@ -629,20 +619,16 @@ void SaveKinectData::StartCapturingInternal()
 				/********************	End		************************************/
 			}
 
-			//DepthCodec depthCodec;
-			//depthCodec.encode((unsigned short *)/*z_bufferFinal.data*/send_data.data, WIDTH*HEIGHT*sizeof(XnUInt16),
-			//	(unsigned char *)m_depthStream, &m_depthSize);
-
 			DepthCodec pointcloudX_Codec;
-			pointcloudX_Codec.encode((unsigned short *)/*z_bufferFinal.data*/ Point_Cloud_X.data, WIDTH * HEIGHT * sizeof(XnUInt16),
+			pointcloudX_Codec.encode((unsigned short *)Point_Cloud_X.data, WIDTH * HEIGHT * sizeof(XnUInt16),
 									 (unsigned char *)m_pointcloudX_Stream, &m_pointcloudX_depthSize);
 
 			DepthCodec pointcloudY_Codec;
-			pointcloudX_Codec.encode((unsigned short *)/*z_bufferFinal.data*/ Point_Cloud_Y.data, WIDTH * HEIGHT * sizeof(XnUInt16),
+			pointcloudX_Codec.encode((unsigned short *)Point_Cloud_Y.data, WIDTH * HEIGHT * sizeof(XnUInt16),
 									 (unsigned char *)m_pointcloudY_Stream, &m_pointcloudY_depthSize);
 
 			DepthCodec pointcloudZ_Codec;
-			pointcloudX_Codec.encode((unsigned short *)/*z_bufferFinal.data*/ Point_Cloud_Z.data, WIDTH * HEIGHT * sizeof(XnUInt16),
+			pointcloudX_Codec.encode((unsigned short *)Point_Cloud_Z.data, WIDTH * HEIGHT * sizeof(XnUInt16),
 									 (unsigned char *)m_pointcloudZ_Stream, &m_pointcloudZ_depthSize);
 
 			Point_Cloud_X.release();
@@ -669,10 +655,7 @@ void SaveKinectData::StartCapturingInternal()
 			jpegfmt.push_back(CV_IMWRITE_JPEG_QUALITY);
 			jpegfmt.push_back(JPEGQUALITY);
 
-			//const XnUInt8* ppI = imageMD.Data();
-
-			cv::imencode(".jpg", /*virtualImage*/ m_RGB, m_jpegBuf, jpegfmt);
-			//cv::imencode(".jpg", /*virtualImage*/m_img, m_jpegBuf, jpegfmt);
+			cv::imencode(".jpg", m_RGB, m_jpegBuf, jpegfmt);
 
 			m_jpegSize = m_jpegBuf.size();
 			char *z = m_jpegStream;
@@ -681,7 +664,6 @@ void SaveKinectData::StartCapturingInternal()
 
 			jpegfmt.clear();
 		}
-
 		//SleepEx(25, false);
 	}
 }
@@ -923,38 +905,6 @@ int main()
 					dataLeft -= bytecount;
 				}
 
-				//// (3) Receive 1 unsigned long (value = 2) to send depth bitstream
-				//if ((bytecount = recv(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
-				//	fprintf(stderr, "Error receiving Depth instruction: %d\n", WSAGetLastError());
-				//	exit(-1);
-				//}
-				//if (buf == 9999) break;
-				//if (buf != 2) {
-				//	fprintf(stderr, "Expect 1 (Depth) but received %d\n", buf);
-				//	exit(-1);
-				//}
-
-				//// (4) Send 1 unsigned long on the size of the depth bitstream
-				//buf = save.getDepthStreamSize();
-				//if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
-				//	fprintf(stderr, "Error sending Depth size : %d\n", WSAGetLastError());
-				//	exit(-1);
-				//}
-
-				//// (5) Send the depth bitstream
-				//bitstream = save.getDepthStream();
-				//dataLeft = buf;
-				//while (dataLeft > 0) {
-				//	bytecount = send(csock, bitstream, dataLeft, 0);
-				//	if (bytecount == SOCKET_ERROR) {
-				//		fprintf(stderr, "Error sending Depth bitstream : %d\n", WSAGetLastError());
-				//		exit(-1);
-				//	}
-				//	bitstream += bytecount;
-				//	dataLeft -= bytecount;
-
-				//}
-
 				// (3.1) Receive 1 unsigned long (value = 3) to send point cloud X bitstream
 				if ((bytecount = recv(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR)
 				{
@@ -1067,12 +1017,10 @@ int main()
 				}
 			}
 
-			else if (eye_rec[0] == 0 && eye_rec[1] == 1) //start the tracking proceduring
+			else if (eye_rec[0] == 0 && eye_rec[1] == 1) // start the tracking proceduring
 			{
 				printf("tracking is on ...\n");
 				save.sphereTracking();
-				//save.reallocateTracking();
-				//g_pDrawer->setTrackSignal(1);
 				printf("tracking is done!\n");
 
 				//(1)a send 1 unsigned long on the size of the path bitstream
@@ -1099,7 +1047,6 @@ int main()
 				}
 
 				save.resetTracking();
-				//g_pDrawer->setTrackSignal(0);
 			}
 
 			// (2) Send 1 unsigned long on the size of the JPEG bitstream

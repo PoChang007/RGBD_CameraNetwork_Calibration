@@ -18,31 +18,18 @@ typedef signed long long int int64_t;
 class SaveKinectData
 {
 private:
-	//std::deque<cv::Mat*> imgs;
-	//std::deque<cv::Mat*> depths;
-	//std::deque<cv::Mat*> RGBs;
-	//std::deque<std::vector<cv::Point3f>*> clouds;
 	HANDLE hCaptureThread, hSaveThread, hDoneSaving;
-	//KinectGrabber *kc;
-
 	std::string direc;
 
 protected:
-	//cv::Mat rgb_l_imgs[150];
-	//cv::Mat depth_l_imgs[150];
-
 	static const int cColorWidth = 1920;
 	static const int cColorHeight = 1080;
 	static const int cDepthWidth = 512;
 	static const int cDepthHeight = 424;
-	//int indexc = 0;
-	//std::vector<cv::Point2i> l_blob;
 	cv::Mat l_thr;
-	//cv::Mat RGBImg = cv::Mat::zeros(cDepthHeight, cDepthWidth, CV_8UC3);
 	int pt_rand = 50;
-	//std::vector<cv::Point3f> l_pts, r_pts /*final_pts*/;
-
 	int ransac_max = 5000;
+
 	/*store the 3D point cloud in matrix form (the same data as l_pts*/
 	cv::Mat pts_mat;
 	cv::Mat sphere_center;
@@ -50,7 +37,7 @@ protected:
 	float estimated_radius = 203.0f;											/*203.0f;*/
 	float radius_min_range = (estimated_radius - 40) * (estimated_radius - 40); //40
 	float radius_max_range = (estimated_radius + 40) * (estimated_radius + 40); //40
-	//FILE *fp;
+
 	cv::Mat send_data;
 	char *m_depthStream;
 	unsigned long m_depthSize;
@@ -86,15 +73,11 @@ public:
 	bool kinect_init;
 	int count;
 	bool quit;
-	//std::vector<cv::Point3f> final_pts;
 	int csock;
 	KinectGrabber *kc;
-	//std::deque<cv::Mat*> imgs;
-	//std::deque<cv::Mat*> depths;
 	SaveKinectData(std::string _directory) : quit(false), kinect_init(false), count(0), direc(_directory) {}
 	SaveKinectData(KinectGrabber *_kc, std::string _directory) : quit(false), kinect_init(true), kc(_kc), count(0), direc(_directory){};
-
-	//void StartSavingInternal();
+	
 	void StartCapturingInternal();
 	void Start();
 	void Stop();

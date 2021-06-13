@@ -40,8 +40,6 @@ class KinectGrabber
 {
 public:
 	KinectGrabber(const int instance = 0);
-	// const Mode& depth_mode = OpenNI_Default_Mode,
-	// const Mode& image_mode = OpenNI_Default_Mode);
 
 	/** \brief virtual Destructor inherited from the Grabber interface. It never throws. */
 	~KinectGrabber() throw();
@@ -70,7 +68,7 @@ public:
 
 	void GetColor(cv::Mat &color);
 	void GetDepth(cv::Mat &depth);
-	void GetCloud(/*std::vector<cv::Point3f> &cloud,*/ cv::Mat &Point_Cloud_X, cv::Mat &Point_Cloud_Y, cv::Mat &Point_Cloud_Z);
+	void GetCloud(cv::Mat &Point_Cloud_X, cv::Mat &Point_Cloud_Y, cv::Mat &Point_Cloud_Z);
 	void GetRGB(cv::Mat &RGB);
 
 	//Used internally, do not call!
@@ -78,15 +76,13 @@ public:
 	cv::Mat ConvertMat(const RGBQUAD *pBuffer, int nWidth, int nHeight);
 
 protected:
-	//int indexc = 0;
-	//std::vector<cv::Point2i> l_blob;
 	RGBQUAD *TEPdep;
 	unsigned char b, g, r;
 	bool m_depthStarted, m_videoStarted, m_audioStarted, m_infraredStarted, m_person, m_preregistered;
+
 	// Current Kinect
 	IKinectSensor *m_pKinectSensor;
-
-	//IColorFrameReader*      m_pColorFrameReader;
+	
 	ICoordinateMapper *m_pCoordinateMapper;
 	IMultiSourceFrameReader *m_pMultiSourceFrameReader;
 
@@ -97,7 +93,6 @@ protected:
 	cv::Size m_colorSize, m_depthSize;
 	RGBQUAD *m_pColorRGBX;
 	UINT16 *m_pDepthBuffer;
-	//std::vector<UINT16> m_pDepthBuffer;
 
 	std::vector<UINT16> depthBuffer;
 	std::vector<RGBQUAD> colorBuffer;
