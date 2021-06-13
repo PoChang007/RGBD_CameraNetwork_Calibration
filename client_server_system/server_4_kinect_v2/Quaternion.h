@@ -152,8 +152,7 @@ struct Quaternion
 		float wz = w * z;
 
 		// This calculation would be a lot more complicated for non-unit length quaternions
-		// Note: The constructor of Matrix4 expects the Matrix in column-major format like expected by
-		//   OpenGL
+		// Note: The constructor of Matrix4 expects the Matrix in column-major format like expected by OpenGL
 		M[0] = 1.0f - 2.0f * (y2 + z2);
 		M[3] = 2.0f * (xy - wz);
 		M[6] = 2.0f * (xz + wy);

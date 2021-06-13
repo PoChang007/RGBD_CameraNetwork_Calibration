@@ -253,7 +253,6 @@ void KinectGrabber::GetNextFrame()
 		RGBQUAD *pColorBuffer = NULL;
 
 		// get color frame data
-
 		if (SUCCEEDED(hr))
 		{
 			hr = pColorFrame->get_FrameDescription(&pColorFrameDescription);
@@ -273,7 +272,7 @@ void KinectGrabber::GetNextFrame()
 		{
 			hr = pColorFrame->get_RawColorImageFormat(&imageFormat);
 		}
-		//cv::Mat bufferMat(nColorHeight, nColorWidth, CV_8UC4);
+
 		if (SUCCEEDED(hr))
 		{
 			if (imageFormat == ColorImageFormat_Bgra)
@@ -285,7 +284,6 @@ void KinectGrabber::GetNextFrame()
 				pColorBuffer = m_pColorRGBX;
 				nColorBufferSize = cColorWidth * cColorHeight * sizeof(RGBQUAD);
 				hr = pColorFrame->CopyConvertedFrameDataToArray(nColorBufferSize, reinterpret_cast<BYTE *>(pColorBuffer), ColorImageFormat_Bgra);
-				/*bufferMat.data = pColorBuffer;*/
 			}
 			else
 			{
@@ -294,7 +292,6 @@ void KinectGrabber::GetNextFrame()
 		}
 
 		// get depth frame data
-
 		hr = pDepthFrame->get_RelativeTime(&nDepthTime);
 
 		if (SUCCEEDED(hr))
@@ -345,7 +342,6 @@ void KinectGrabber::GetNextFrame()
 			{
 				for (int x = 0; x < cColorWidth; x = x + DownSample_scale)
 				{
-
 					unsigned int index = y * cColorWidth + x;
 					DepthSpacePoint point = depthSpacePoints[index];
 					int depthX = static_cast<int>(std::floor(point.X + 0.5));
@@ -353,7 +349,6 @@ void KinectGrabber::GetNextFrame()
 					if ((depthX >= 0) && (depthX < nDepthWidth) && (depthY >= 0) && (depthY < nDepthHeight))
 					{
 						coordinateMapperMat.at<UINT16>(y, x) = bufferMatDepth.at<UINT16>(depthY, depthX);
-
 						cv::Point3f point_3D;
 
 						// Coordinate Mapping Depth to Camera Space, and Setting PointCloud XYZ
@@ -382,7 +377,6 @@ void KinectGrabber::GetNextFrame()
 
 			if (SUCCEEDED(hr))
 			{
-
 				WaitForSingleObject(hCloudMutex, INFINITE);
 
 				PointCloud_X.release();
@@ -466,7 +460,7 @@ void KinectGrabber::GetColor(Mat &image)
 void KinectGrabber::GetDepth(Mat &image)
 {
 	WaitForSingleObject(hDepthMutex, INFINITE);
-	image = /*coordinateMapperDepthMat;*/ m_depthImage;
+	image = m_depthImage;
 	ReleaseMutex(hDepthMutex);
 }
 
@@ -474,10 +468,9 @@ void KinectGrabber::GetDepth(Mat &image)
 
 #pragma region Cloud
 
-void KinectGrabber::GetCloud(/*std::vector<cv::Point3f> &cloud,*/ cv::Mat &Point_Cloud_X, cv::Mat &Point_Cloud_Y, cv::Mat &Point_Cloud_Z)
+void KinectGrabber::GetCloud(cv::Mat &Point_Cloud_X, cv::Mat &Point_Cloud_Y, cv::Mat &Point_Cloud_Z)
 {
 	WaitForSingleObject(hCloudMutex, INFINITE);
-	//cloud = /*coordinateMapperDepthMat;*/l_pts;
 	PointCloud_X.copyTo(Point_Cloud_X);
 	PointCloud_Y.copyTo(Point_Cloud_Y);
 	PointCloud_Z.copyTo(Point_Cloud_Z);
@@ -491,7 +484,7 @@ void KinectGrabber::GetCloud(/*std::vector<cv::Point3f> &cloud,*/ cv::Mat &Point
 void KinectGrabber::GetRGB(Mat &RGB)
 {
 	WaitForSingleObject(hRGBMutex, INFINITE);
-	RGB = /*coordinateMapperDepthMat;*/ m_RGBImage;
+	RGB = m_RGBImage;
 	ReleaseMutex(hRGBMutex);
 }
 
