@@ -1,4 +1,4 @@
-﻿// Copyright 2017 University of Kentucky 
+﻿// Copyright 2017 University of Kentucky
 // Po-Chang Su, Ju Shen, Wanxin Xu, Sen-ching Samson Cheung, Ying Luo
 
 #include "OpenCV_KinectSDK.h"
@@ -18,13 +18,14 @@ using namespace std;
 using namespace cv;
 
 extern ofstream out_txt;
-DWORD ProcessThread1(LPVOID pParam) {
-	SaveKinectData *p = (SaveKinectData*) pParam;
+DWORD ProcessThread1(LPVOID pParam)
+{
+	SaveKinectData *p = (SaveKinectData *)pParam;
 	p->StartCapturingInternal();
 	return 0;
 }
 
-void SaveKinectData::FindBlobs(const cv::Mat &binary, std::vector < std::vector<cv::Point2i> > &blobs)
+void SaveKinectData::FindBlobs(const cv::Mat &binary, std::vector<std::vector<cv::Point2i>> &blobs)
 {
 	blobs.clear();
 
@@ -38,20 +39,26 @@ void SaveKinectData::FindBlobs(const cv::Mat &binary, std::vector < std::vector<
 
 	int label_count = 2; // starts at 2 because 0,1 are used already
 
-	for (int y = 0; y < binary.rows; y++) {
-		for (int x = 0; x < binary.cols; x++) {
-			if ((int)label_image.at<float>(y, x) != 255) {
+	for (int y = 0; y < binary.rows; y++)
+	{
+		for (int x = 0; x < binary.cols; x++)
+		{
+			if ((int)label_image.at<float>(y, x) != 255)
+			{
 				continue;
 			}
 
 			cv::Rect rect;
 			cv::floodFill(label_image, cv::Point(x, y), cv::Scalar(label_count), &rect, cv::Scalar(0), cv::Scalar(0), 4);
 
-			std::vector <cv::Point2i> blob;
+			std::vector<cv::Point2i> blob;
 
-			for (int i = rect.y; i < (rect.y + rect.height); i++) {
-				for (int j = rect.x; j < (rect.x + rect.width); j++) {
-					if ((int)label_image.at<float>(i, j) != label_count) {
+			for (int i = rect.y; i < (rect.y + rect.height); i++)
+			{
+				for (int j = rect.x; j < (rect.x + rect.width); j++)
+				{
+					if ((int)label_image.at<float>(i, j) != label_count)
+					{
 						continue;
 					}
 
@@ -70,7 +77,7 @@ void SaveKinectData::FindBlobs(const cv::Mat &binary, std::vector < std::vector<
 void SaveKinectData::findSphereBlobs(cv::Mat &Stored_Image, int index)
 {
 	/*This part is to find connecting parts on the left image*/
-	std::vector < std::vector<cv::Point2i > > blobs;
+	std::vector<std::vector<cv::Point2i>> blobs;
 	FindBlobs(l_thr, blobs);
 
 	/*Find the largest connected points of left image*/
@@ -89,9 +96,7 @@ void SaveKinectData::findSphereBlobs(cv::Mat &Stored_Image, int index)
 		l_blob = blobs[max_idx];
 	}
 
-
 	/********************* For testing purpose ***************************************/
-
 
 	/*Generate slide window to go through all the pixels*/
 	cv::Mat l_thr_3c, r_thr_3c; /*3-channel version of l_thr, r_thr*/
@@ -99,9 +104,7 @@ void SaveKinectData::findSphereBlobs(cv::Mat &Stored_Image, int index)
 
 	cv::Mat BinaryImage = cv::Mat::zeros(l_thr.rows, l_thr.cols, CV_8UC3);
 
-
 	Stored_Image.copyTo(l_thr_3c);
-
 
 	for (int i = 0; i < (int)l_blob.size(); i++)
 	{
@@ -117,7 +120,6 @@ void SaveKinectData::findSphereBlobs(cv::Mat &Stored_Image, int index)
 		BinaryImage.ptr<uchar>(y)[3 * x + 2] = 255;
 	}
 
-
 	/*Save the images to file*/
 	{
 		char filename[200];
@@ -126,9 +128,7 @@ void SaveKinectData::findSphereBlobs(cv::Mat &Stored_Image, int index)
 
 		sprintf(filename, "tracking/Binaryimg_%d_%03d.jpg", CLIENTID, index);
 		cv::imwrite(filename, BinaryImage);
-
 	}
-
 }
 
 void SaveKinectData::regionDetection(cv::Mat &left, int i)
@@ -164,7 +164,6 @@ void SaveKinectData::compute3Dpoints(cv::Mat &PointCloudX, cv::Mat &PointCloudY,
 	sphere_radius = 0; //as I use the radius as condition for ransac purpose, so set it to zero for each new frame
 	final_pts.clear();
 
-
 	/*compute the left image*/
 	char filename[200];
 	sprintf(filename, "tracking/kinect_%d_%02d.txt", CLIENTID, index);
@@ -183,11 +182,9 @@ void SaveKinectData::compute3Dpoints(cv::Mat &PointCloudX, cv::Mat &PointCloudY,
 		pt.y = (float)PointCloudY.ptr<short int>(y_2d)[x_2d];
 		pt.z = (float)PointCloudZ.ptr<short int>(y_2d)[x_2d];
 
-
 		/*check whether the depth is measurable*/
 		if (pt.z != 0)
 		{
-
 
 			if (pt.z < 3500) // for ICME paper
 			//if (pt.z < 5500) // large area: for camera next to wall
@@ -206,10 +203,8 @@ void SaveKinectData::compute3Dpoints(cv::Mat &PointCloudX, cv::Mat &PointCloudY,
 		}
 	}
 
-
 	out.close();
 }
-
 
 void SaveKinectData::sphereFitting(int index)
 {
@@ -219,7 +214,6 @@ void SaveKinectData::sphereFitting(int index)
 	if (total > pt_rand)
 	{
 		r_pts = l_pts;
-
 
 		int random = 0;
 		while (random < ransac_max && sphere_sign == 0)
@@ -238,19 +232,16 @@ void SaveKinectData::sphereFitting(int index)
 			{
 				/*further refine the sphere center and radius by encompassing more points*/
 				sphereRefine(index);
-
 			}
 
 			random++;
 		}
-
 	}
 	else
 	{
 		sphere_center = cv::Mat::zeros(3, 1, CV_32FC1);
 	}
 }
-
 
 /*Compute the sphere center based on the point cloud*/
 void SaveKinectData::computeSpehereCenter(std::vector<cv::Point3f> &cur_pts)
@@ -259,9 +250,9 @@ void SaveKinectData::computeSpehereCenter(std::vector<cv::Point3f> &cur_pts)
 	pts_mat = cv::Mat::zeros(cur_pts.size(), 3, CV_32FC1);
 	for (int row = 0; row < pts_mat.rows; row++)
 	{
-		pts_mat.ptr<float>(row)[0] = cur_pts[row].x/**1000.0f*/;
-		pts_mat.ptr<float>(row)[1] = cur_pts[row].y/**1000.0f*/;
-		pts_mat.ptr<float>(row)[2] = cur_pts[row].z/**1000.0f*/;
+		pts_mat.ptr<float>(row)[0] = cur_pts[row].x /**1000.0f*/;
+		pts_mat.ptr<float>(row)[1] = cur_pts[row].y /**1000.0f*/;
+		pts_mat.ptr<float>(row)[2] = cur_pts[row].z /**1000.0f*/;
 	}
 	cv::Mat col_1, col_2, col_3; //store each column of the point cloud matrix
 
@@ -269,10 +260,8 @@ void SaveKinectData::computeSpehereCenter(std::vector<cv::Point3f> &cur_pts)
 	pts_mat(cv::Range(0, pts_mat.rows), cv::Range(1, 2)).copyTo(col_2);
 	pts_mat(cv::Range(0, pts_mat.rows), cv::Range(2, 3)).copyTo(col_3);
 
-
 	/*Compute the part from Matlab*/
 	cv::Mat A = cv::Mat::zeros(3, 3, CV_32FC1);
-
 
 	/*  Compute a_11  */
 	cv::Mat col_1_mean = col_1 - cv::mean(col_1)(0);
@@ -291,7 +280,6 @@ void SaveKinectData::computeSpehereCenter(std::vector<cv::Point3f> &cur_pts)
 	cv::Mat col_1_dot_3_mean;
 	cv::multiply(col_1, col_3_mean, col_1_dot_3_mean, 1.0);
 	A.ptr<float>(0)[2] = 2 * (float)cv::mean(col_1_dot_3_mean)(0);
-
 
 	/*  Compute a_21  */
 	cv::Mat col_2_dot_1_mean;
@@ -335,16 +323,13 @@ void SaveKinectData::computeSpehereCenter(std::vector<cv::Point3f> &cur_pts)
 	cv::multiply(sqr_sum, col_2_mean, b2, 1.0);
 	cv::multiply(sqr_sum, col_3_mean, b3, 1.0);
 
-
 	B.ptr<float>(0)[0] = (float)cv::mean(b1)(0);
 	B.ptr<float>(1)[0] = (float)cv::mean(b2)(0);
 	B.ptr<float>(2)[0] = (float)cv::mean(b3)(0);
 
-
 	/*Compute the center*/
 	cv::Mat center;
 	cv::solve(A, B, center, cv::DECOMP_SVD);
-
 
 	/*Compute the radius*/
 	cv::Mat sum_cols;
@@ -355,16 +340,13 @@ void SaveKinectData::computeSpehereCenter(std::vector<cv::Point3f> &cur_pts)
 	sum_cols = col_1_sqr + col_2_sqr + col_3_sqr;
 	float radius = cv::sqrt(cv::mean(sum_cols)(0));
 
-
 	/*I will do more code here to verify the radius and center, here copy the temporary data to global*/
 	center.copyTo(sphere_center);
 	sphere_radius = radius;
 
 	//printf("[%f, %f, %f]\n", center.ptr<float>(0)[0], center.ptr<float>(1)[0], center.ptr<float>(2)[0]);
 	//printf("radius: %.5f\n", radius);
-
 }
-
 
 void SaveKinectData::sphereRefine(int index)
 {
@@ -382,7 +364,6 @@ void SaveKinectData::sphereRefine(int index)
 	cv::transpose(sphere_center, center_tran);
 	cv::repeat(center_tran, all_pts_mat.rows, 1, center_mat);
 
-
 	cv::Mat pts_cen = all_pts_mat - center_mat;
 
 	cv::Mat pts_cen_sqr = pts_cen.mul(pts_cen, 1.0);
@@ -390,7 +371,6 @@ void SaveKinectData::sphereRefine(int index)
 	cv::Mat dis_mat;
 
 	cv::reduce(pts_cen_sqr, dis_mat, 1, CV_REDUCE_SUM);
-
 
 	/*Get the final point set*/
 	final_pts.clear();
@@ -415,15 +395,12 @@ void SaveKinectData::sphereRefine(int index)
 
 		/*Further refine the radius and center position*/
 		computeSpehereCenter(final_pts);
-
 	}
-
-
 }
 
 void SaveKinectData::sphereTracking()
 {
-	total_num = save_index-1;
+	total_num = save_index - 1;
 	int final_num;
 
 	if (total_num > NUMBER)
@@ -437,7 +414,6 @@ void SaveKinectData::sphereTracking()
 
 	l_pts.clear();
 	final_pts.clear();
-
 
 	/*File used for storing sphere path*/
 	char path_file[200];
@@ -463,19 +439,19 @@ void SaveKinectData::sphereTracking()
 		sprintf(filename, "3D_Data/kinect_%d_PointCloudX_%02d.dat", CLIENTID, index);
 		FILE *fpX = fopen(filename, "rb");
 		PointCloudX = cv::Mat::zeros(HEIGHT, WIDTH, CV_16UC1);
-		fread(PointCloudX.data, 2, HEIGHT*WIDTH, fpX);
+		fread(PointCloudX.data, 2, HEIGHT * WIDTH, fpX);
 		fclose(fpX);
 
 		sprintf(filename, "3D_Data/kinect_%d_PointCloudY_%02d.dat", CLIENTID, index);
 		FILE *fpY = fopen(filename, "rb");
 		PointCloudY = cv::Mat::zeros(HEIGHT, WIDTH, CV_16UC1);
-		fread(PointCloudY.data, 2, HEIGHT*WIDTH, fpY);
+		fread(PointCloudY.data, 2, HEIGHT * WIDTH, fpY);
 		fclose(fpY);
 
 		sprintf(filename, "3D_Data/kinect_%d_PointCloudZ_%02d.dat", CLIENTID, index);
 		FILE *fpZ = fopen(filename, "rb");
 		PointCloudZ = cv::Mat::zeros(HEIGHT, WIDTH, CV_16UC1);
-		fread(PointCloudZ.data, 2, HEIGHT*WIDTH, fpZ);
+		fread(PointCloudZ.data, 2, HEIGHT * WIDTH, fpZ);
 		fclose(fpZ);
 
 		/*Detecting the ball region*/
@@ -513,8 +489,6 @@ void SaveKinectData::sphereTracking()
 			total_radius += sphere_radius;
 			radius_list[total_num] = sphere_radius;
 			total_num++;
-
-
 		}
 		else
 		{
@@ -533,7 +507,6 @@ void SaveKinectData::sphereTracking()
 
 			out_test << "-------";
 			out_test << "\n";
-
 		}
 
 		r_blob.clear();
@@ -548,7 +521,7 @@ void SaveKinectData::sphereTracking()
 	out_test.close();
 }
 
-void saveDepth(cv::Mat depth, char* filename)
+void saveDepth(cv::Mat depth, char *filename)
 {
 	cv::Mat depth_jpg = cv::Mat::zeros(424, 512, CV_8UC1);
 
@@ -556,7 +529,7 @@ void saveDepth(cv::Mat depth, char* filename)
 	{
 		for (int x = 0; x < 512; x++)
 		{
-			depth_jpg.ptr<uchar>(y)[x] = 255 * depth.ptr<short int>(y)[x] / 5000/*1200*//*4600*/;
+			depth_jpg.ptr<uchar>(y)[x] = 255 * depth.ptr<short int>(y)[x] / 5000 /*1200*/ /*4600*/;
 		}
 	}
 
@@ -564,10 +537,12 @@ void saveDepth(cv::Mat depth, char* filename)
 	depth_jpg.release();
 }
 
-void SaveKinectData::StartCapturingInternal() {
+void SaveKinectData::StartCapturingInternal()
+{
 
 	//Sleep(30);
-	if (!quit) {
+	if (!quit)
+	{
 		kc->GetDepth(m_depth);
 		kc->GetColor(m_img);
 		kc->GetCloud(Point_Cloud_X, Point_Cloud_Y, Point_Cloud_Z);
@@ -586,12 +561,11 @@ void SaveKinectData::StartCapturingInternal() {
 				//structure to store local time (local time in 64 bits)
 				FILETIME ftTimeStamp;
 
-				char TimeStamp[256];//to store TimeStamp information
+				char TimeStamp[256];				   //to store TimeStamp information
 				GetSystemTimeAsFileTime(&ftTimeStamp); //Gets the current system time
 
-				FileTimeToLocalFileTime(&ftTimeStamp, &ltime);//convert in local time and store in ltime
-				FileTimeToSystemTime(&ltime, &stime);//convert in system time and store in stime
-
+				FileTimeToLocalFileTime(&ftTimeStamp, &ltime); //convert in local time and store in ltime
+				FileTimeToSystemTime(&ltime, &stime);		   //convert in system time and store in stime
 
 				/*******************	Save Image to Local *************************/
 				FILE *fp;
@@ -613,17 +587,17 @@ void SaveKinectData::StartCapturingInternal() {
 
 				sprintf(filename, "3D_Data/kinect_%d_PointCloudX_%02d.dat", CLIENTID, save_index);
 				fpX = fopen(filename, "wb");
-				fwrite(Point_Cloud_X.data, 2, HEIGHT*WIDTH, fpX);
+				fwrite(Point_Cloud_X.data, 2, HEIGHT * WIDTH, fpX);
 				fclose(fpX);
 
 				sprintf(filename, "3D_Data/kinect_%d_PointCloudY_%02d.dat", CLIENTID, save_index);
 				fpY = fopen(filename, "wb");
-				fwrite(Point_Cloud_Y.data, 2, HEIGHT*WIDTH, fpY);
+				fwrite(Point_Cloud_Y.data, 2, HEIGHT * WIDTH, fpY);
 				fclose(fpY);
 
 				sprintf(filename, "3D_Data/kinect_%d_PointCloudZ_%02d.dat", CLIENTID, save_index);
 				fpZ = fopen(filename, "wb");
-				fwrite(Point_Cloud_Z.data, 2, HEIGHT*WIDTH, fpZ);
+				fwrite(Point_Cloud_Z.data, 2, HEIGHT * WIDTH, fpZ);
 				fclose(fpZ);
 
 				///*Save depth image*/
@@ -650,7 +624,6 @@ void SaveKinectData::StartCapturingInternal() {
 				out_txt << time_stamp;
 				out_txt << "\n";
 
-
 				printf("save_index: %d\n", save_index);
 				save_index++;
 				/********************	End		************************************/
@@ -661,16 +634,16 @@ void SaveKinectData::StartCapturingInternal() {
 			//	(unsigned char *)m_depthStream, &m_depthSize);
 
 			DepthCodec pointcloudX_Codec;
-			pointcloudX_Codec.encode((unsigned short *)/*z_bufferFinal.data*/Point_Cloud_X.data, WIDTH*HEIGHT*sizeof(XnUInt16),
-				(unsigned char *)m_pointcloudX_Stream, &m_pointcloudX_depthSize);
+			pointcloudX_Codec.encode((unsigned short *)/*z_bufferFinal.data*/ Point_Cloud_X.data, WIDTH * HEIGHT * sizeof(XnUInt16),
+									 (unsigned char *)m_pointcloudX_Stream, &m_pointcloudX_depthSize);
 
 			DepthCodec pointcloudY_Codec;
-			pointcloudX_Codec.encode((unsigned short *)/*z_bufferFinal.data*/Point_Cloud_Y.data, WIDTH*HEIGHT*sizeof(XnUInt16),
-				(unsigned char *)m_pointcloudY_Stream, &m_pointcloudY_depthSize);
+			pointcloudX_Codec.encode((unsigned short *)/*z_bufferFinal.data*/ Point_Cloud_Y.data, WIDTH * HEIGHT * sizeof(XnUInt16),
+									 (unsigned char *)m_pointcloudY_Stream, &m_pointcloudY_depthSize);
 
 			DepthCodec pointcloudZ_Codec;
-			pointcloudX_Codec.encode((unsigned short *)/*z_bufferFinal.data*/Point_Cloud_Z.data, WIDTH*HEIGHT*sizeof(XnUInt16),
-				(unsigned char *)m_pointcloudZ_Stream, &m_pointcloudZ_depthSize);
+			pointcloudX_Codec.encode((unsigned short *)/*z_bufferFinal.data*/ Point_Cloud_Z.data, WIDTH * HEIGHT * sizeof(XnUInt16),
+									 (unsigned char *)m_pointcloudZ_Stream, &m_pointcloudZ_depthSize);
 
 			Point_Cloud_X.release();
 			Point_Cloud_Y.release();
@@ -684,22 +657,21 @@ void SaveKinectData::StartCapturingInternal() {
 			cv::meanStdDev(tmpM, mean, std);
 			fprintf(stderr, ">>B mean = %f, stdev = %f\n", mean[0], std[0]);
 			depthCodec.decode((unsigned char *)m_depthStream, m_depthSize,
-				(unsigned short *)m_depth.data, &tmp);
+							  (unsigned short *)m_depth.data, &tmp);
 			cv::meanStdDev(m_depth, mean, std);
 			fprintf(stderr, "mean = %f, stdev = %f\n", mean[0], std[0]);
 			fprintf(stderr, "Depth max value = %u\n", m_DepthGenerator.GetDeviceMaxDepth());
 #endif
 
-
 			/*Compress Virtual Image to bitstream*/
-			// JPEG Quality		
+			// JPEG Quality
 			vector<int> jpegfmt;
 			jpegfmt.push_back(CV_IMWRITE_JPEG_QUALITY);
 			jpegfmt.push_back(JPEGQUALITY);
 
 			//const XnUInt8* ppI = imageMD.Data();
 
-			cv::imencode(".jpg", /*virtualImage*/m_RGB, m_jpegBuf, jpegfmt);
+			cv::imencode(".jpg", /*virtualImage*/ m_RGB, m_jpegBuf, jpegfmt);
 			//cv::imencode(".jpg", /*virtualImage*/m_img, m_jpegBuf, jpegfmt);
 
 			m_jpegSize = m_jpegBuf.size();
@@ -708,14 +680,11 @@ void SaveKinectData::StartCapturingInternal() {
 				*(z++) = *zz;
 
 			jpegfmt.clear();
-
 		}
 
 		//SleepEx(25, false);
 	}
-
 }
-
 
 void SaveKinectData::closeTimeFile()
 {
@@ -727,22 +696,22 @@ void SaveKinectData::openTimeFile()
 	out_txt.open(path_file, std::ofstream::out | std::ofstream::app);
 }
 
-
 void SaveKinectData::setSaveSignal(int x)
 {
 	save_image = x;
 }
-void SaveKinectData::Start() {
+void SaveKinectData::Start()
+{
 	quit = false;
-	m_depthStream = (char *)malloc(WIDTH*HEIGHT*sizeof(XnUInt16));
-	m_jpegStream = (char *)malloc(WIDTH*HEIGHT * 4 * sizeof(XnUInt8));
+	m_depthStream = (char *)malloc(WIDTH * HEIGHT * sizeof(XnUInt16));
+	m_jpegStream = (char *)malloc(WIDTH * HEIGHT * 4 * sizeof(XnUInt8));
 	m_pathStream = (char *)malloc(NUMBER * 3 * sizeof(XnUInt16));
-	m_pointcloudX_Stream = (char *)malloc(WIDTH*HEIGHT*sizeof(XnUInt16));
-	m_pointcloudY_Stream = (char *)malloc(WIDTH*HEIGHT*sizeof(XnUInt16));
-	m_pointcloudZ_Stream = (char *)malloc(WIDTH*HEIGHT*sizeof(XnUInt16));
+	m_pointcloudX_Stream = (char *)malloc(WIDTH * HEIGHT * sizeof(XnUInt16));
+	m_pointcloudY_Stream = (char *)malloc(WIDTH * HEIGHT * sizeof(XnUInt16));
+	m_pointcloudZ_Stream = (char *)malloc(WIDTH * HEIGHT * sizeof(XnUInt16));
 
 	m_depthSize = 0; // no useful data
-	m_jpegSize = 0; // no useful data
+	m_jpegSize = 0;	 // no useful data
 	m_pathSize = 0;
 	m_pointcloudX_depthSize = 0;
 	m_pointcloudY_depthSize = 0;
@@ -752,17 +721,17 @@ void SaveKinectData::Start() {
 	out_txt.open(path_file, std::ofstream::out | std::ofstream::app);
 
 	path_mat = cv::Mat::zeros(NUMBER, 3, CV_16UC1);
-
 }
 
-void SaveKinectData::Stop() {
-	delete[]m_depthStream;
-	delete[]m_jpegStream;
-	delete[]m_pathStream;
+void SaveKinectData::Stop()
+{
+	delete[] m_depthStream;
+	delete[] m_jpegStream;
+	delete[] m_pathStream;
 
-	delete[]m_pointcloudX_Stream;
-	delete[]m_pointcloudY_Stream;
-	delete[]m_pointcloudZ_Stream;
+	delete[] m_pointcloudX_Stream;
+	delete[] m_pointcloudY_Stream;
+	delete[] m_pointcloudZ_Stream;
 
 	//delete img;
 	m_jpegBuf.clear();
@@ -783,20 +752,22 @@ void SaveKinectData::Stop() {
 	path_mat.release();
 }
 
-
-unsigned long  SaveKinectData::getPathStreamSize(){
+unsigned long SaveKinectData::getPathStreamSize()
+{
 	DepthCodec pathCodec;
 	pathCodec.encode((unsigned short *)path_mat.data, NUMBER * 3 * sizeof(XnUInt16),
-		(unsigned char *)m_pathStream, &m_pathSize);
+					 (unsigned char *)m_pathStream, &m_pathSize);
 	return m_pathSize;
 }
 
-void SaveKinectData::resetTracking(){
+void SaveKinectData::resetTracking()
+{
 	save_index = 0;
 	path_mat = Mat::zeros(NUMBER, 3, CV_16UC1);
 }
 
-void SaveImages(string out,int temp) {
+void SaveImages(string out, int temp)
+{
 	SaveKinectData save(out);
 	save.csock = temp;
 	save.Start();
@@ -807,8 +778,10 @@ void SaveImages(string out,int temp) {
 	save.Stop();
 }
 
-int main () {
-	if (!save.kinect_init) {
+int main()
+{
+	if (!save.kinect_init)
+	{
 		save.kc = new KinectGrabber();
 		save.kinect_init = true;
 		save.kc->start();
@@ -821,21 +794,24 @@ int main () {
 	int err;
 	wVersionRequested = MAKEWORD(2, 2);
 	err = WSAStartup(wVersionRequested, &wsaData);
-	if (err != 0 || (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2)) {
+	if (err != 0 || (LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2))
+	{
 		fprintf(stderr, "Could not find usable sock dll %d\n", WSAGetLastError());
 		exit(-1);
 	}
 	int hsock;
 	int *p_int;
 	hsock = socket(AF_INET, SOCK_STREAM, 0);
-	if (hsock == -1) {
+	if (hsock == -1)
+	{
 		fprintf(stderr, "Error initializing socket %d\n", WSAGetLastError());
 		exit(-1);
 	}
 	p_int = (int *)malloc(sizeof(int));
 	*p_int = 1;
-	if ((setsockopt(hsock, SOL_SOCKET, SO_REUSEADDR, (char*)p_int, sizeof(int)) == -1) ||
-		(setsockopt(hsock, SOL_SOCKET, SO_KEEPALIVE, (char*)p_int, sizeof(int)) == -1)){
+	if ((setsockopt(hsock, SOL_SOCKET, SO_REUSEADDR, (char *)p_int, sizeof(int)) == -1) ||
+		(setsockopt(hsock, SOL_SOCKET, SO_KEEPALIVE, (char *)p_int, sizeof(int)) == -1))
+	{
 		fprintf(stderr, "Error setting options %d\n", WSAGetLastError());
 		free(p_int);
 		exit(-1);
@@ -846,18 +822,21 @@ int main () {
 	my_addr.sin_port = htons(host_port);
 	memset(&(my_addr.sin_zero), 0, 8);
 	my_addr.sin_addr.s_addr = INADDR_ANY;
-	if (bind(hsock, (struct sockaddr*)&my_addr, sizeof(my_addr)) == -1){
+	if (bind(hsock, (struct sockaddr *)&my_addr, sizeof(my_addr)) == -1)
+	{
 		fprintf(stderr, "Error binding to socket, make sure nothing else is listening on this port %d\n", WSAGetLastError());
 		exit(-1);
 	}
-	if (listen(hsock, 1) == -1){
+	if (listen(hsock, 1) == -1)
+	{
 		fprintf(stderr, "Error listening %d\n", WSAGetLastError());
 		exit(-1);
 	}
 
 	save.Start();
 
-	while (1) {
+	while (1)
+	{
 
 		/******************* For Remote Use ************************************************/
 
@@ -865,21 +844,23 @@ int main () {
 		int csock;
 		sockaddr_in sadr;
 		int addr_size = sizeof(SOCKADDR);
-		if ((csock = accept(hsock, (SOCKADDR*)&sadr, &addr_size)) == INVALID_SOCKET) {
+		if ((csock = accept(hsock, (SOCKADDR *)&sadr, &addr_size)) == INVALID_SOCKET)
+		{
 			fprintf(stderr, "Error accepting %d\n", WSAGetLastError());
 			exit(-1);
 		}
 		printf("Received connection from %s.\n", inet_ntoa(sadr.sin_addr));
 		while (1)
 		{
-			int	bytecount;
+			int bytecount;
 			unsigned long buf;
 			unsigned long save_signal;
 
 			// (1) Receive 3 short int variable, indicating the controlling process
 			short int eye_rec[3]; //important signal setting
 
-			if ((bytecount = recv(csock, (char *)eye_rec, sizeof(short int)* 3, 0)) == SOCKET_ERROR) {
+			if ((bytecount = recv(csock, (char *)eye_rec, sizeof(short int) * 3, 0)) == SOCKET_ERROR)
+			{
 				fprintf(stderr, "Error receiving JPEG instruction: %d\n", WSAGetLastError());
 				exit(-1);
 			}
@@ -893,7 +874,7 @@ int main () {
 			{
 				save.openTimeFile();
 				save.setSaveSignal(1);
-				eye_rec[0] == 2; //when eye_rec[0] == 2 it means it is capturing the image 
+				eye_rec[0] == 2; //when eye_rec[0] == 2 it means it is capturing the image
 			}
 			else if (eye_rec[0] == 9999)
 			{
@@ -909,19 +890,20 @@ int main () {
 				save.setSaveSignal(1);
 			}
 
-			if (!save.quit){
+			if (!save.quit)
+			{
 				//SaveImages(string("./captured/"), csock);
 				/*	SaveKinectData save("./captured/");*/
 				save.csock = csock;
 				save.StartCapturingInternal();
-
 			}
 
 			if (eye_rec[2] == 1) //do the demo
 			{
 				// (1) Send 1 unsigned long on the size of the JPEG bitstream
 				buf = save.getJPEGSize();
-				if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
+				if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR)
+				{
 					fprintf(stderr, "Error sending JPEG size : %d\n", WSAGetLastError());
 					exit(-1);
 				}
@@ -929,9 +911,11 @@ int main () {
 				// (2) Send JPEG bitstream
 				char *bitstream = save.getJPEG();
 				unsigned long dataLeft = buf;
-				while (dataLeft > 0) {
+				while (dataLeft > 0)
+				{
 					bytecount = send(csock, bitstream, dataLeft, 0);
-					if (bytecount == SOCKET_ERROR) {
+					if (bytecount == SOCKET_ERROR)
+					{
 						fprintf(stderr, "Error sending JPEG bitstream : %d\n", WSAGetLastError());
 						exit(-1);
 					}
@@ -972,19 +956,23 @@ int main () {
 				//}
 
 				// (3.1) Receive 1 unsigned long (value = 3) to send point cloud X bitstream
-				if ((bytecount = recv(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
+				if ((bytecount = recv(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR)
+				{
 					fprintf(stderr, "Error receiving Depth instruction: %d\n", WSAGetLastError());
 					exit(-1);
 				}
-				if (buf == 9999) break;
-				if (buf != 3) {
+				if (buf == 9999)
+					break;
+				if (buf != 3)
+				{
 					fprintf(stderr, "Expect 1 (Depth) but received %d\n", buf);
 					exit(-1);
 				}
 
 				// (4.1) Send 1 unsigned long on the size of the point cloud X bitstream
 				buf = save.getPointCLoudX_StreamSize();
-				if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
+				if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR)
+				{
 					fprintf(stderr, "Error sending Depth size : %d\n", WSAGetLastError());
 					exit(-1);
 				}
@@ -992,31 +980,36 @@ int main () {
 				// (5.1) Send the point cloud X stream bitstream
 				bitstream = save.getPointCLoudX_Stream();
 				dataLeft = buf;
-				while (dataLeft > 0) {
+				while (dataLeft > 0)
+				{
 					bytecount = send(csock, bitstream, dataLeft, 0);
-					if (bytecount == SOCKET_ERROR) {
+					if (bytecount == SOCKET_ERROR)
+					{
 						fprintf(stderr, "Error sending Depth bitstream : %d\n", WSAGetLastError());
 						exit(-1);
 					}
 					bitstream += bytecount;
 					dataLeft -= bytecount;
-
 				}
 
 				// (3.2) Receive 1 unsigned long (value = 4) to send Y point cloud bitstream
-				if ((bytecount = recv(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
+				if ((bytecount = recv(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR)
+				{
 					fprintf(stderr, "Error receiving Depth instruction: %d\n", WSAGetLastError());
 					exit(-1);
 				}
-				if (buf == 9999) break;
-				if (buf != 4) {
+				if (buf == 9999)
+					break;
+				if (buf != 4)
+				{
 					fprintf(stderr, "Expect 1 (Depth) but received %d\n", buf);
 					exit(-1);
 				}
 
 				// (4.2) Send 1 unsigned long on the size of the point cloud Y bitstream
 				buf = save.getPointCLoudY_StreamSize();
-				if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
+				if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR)
+				{
 					fprintf(stderr, "Error sending Depth size : %d\n", WSAGetLastError());
 					exit(-1);
 				}
@@ -1024,31 +1017,36 @@ int main () {
 				// (5.2) Send the point cloud Y stream bitstream
 				bitstream = save.getPointCLoudY_Stream();
 				dataLeft = buf;
-				while (dataLeft > 0) {
+				while (dataLeft > 0)
+				{
 					bytecount = send(csock, bitstream, dataLeft, 0);
-					if (bytecount == SOCKET_ERROR) {
+					if (bytecount == SOCKET_ERROR)
+					{
 						fprintf(stderr, "Error sending Depth bitstream : %d\n", WSAGetLastError());
 						exit(-1);
 					}
 					bitstream += bytecount;
 					dataLeft -= bytecount;
-
 				}
 
 				// (3.3) Receive 1 unsigned long (value = 5) to send Z point cloud bitstream
-				if ((bytecount = recv(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
+				if ((bytecount = recv(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR)
+				{
 					fprintf(stderr, "Error receiving Depth instruction: %d\n", WSAGetLastError());
 					exit(-1);
 				}
-				if (buf == 9999) break;
-				if (buf != 5) {
+				if (buf == 9999)
+					break;
+				if (buf != 5)
+				{
 					fprintf(stderr, "Expect 1 (Depth) but received %d\n", buf);
 					exit(-1);
 				}
 
 				// (4.3) Send 1 unsigned long on the size of the point cloud Z bitstream
 				buf = save.getPointCLoudZ_StreamSize();
-				if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
+				if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR)
+				{
 					fprintf(stderr, "Error sending Depth size : %d\n", WSAGetLastError());
 					exit(-1);
 				}
@@ -1056,17 +1054,17 @@ int main () {
 				// (5.3) Send the point cloud Z stream bitstream
 				bitstream = save.getPointCLoudZ_Stream();
 				dataLeft = buf;
-				while (dataLeft > 0) {
+				while (dataLeft > 0)
+				{
 					bytecount = send(csock, bitstream, dataLeft, 0);
-					if (bytecount == SOCKET_ERROR) {
+					if (bytecount == SOCKET_ERROR)
+					{
 						fprintf(stderr, "Error sending Depth bitstream : %d\n", WSAGetLastError());
 						exit(-1);
 					}
 					bitstream += bytecount;
 					dataLeft -= bytecount;
-
 				}
-
 			}
 
 			else if (eye_rec[0] == 0 && eye_rec[1] == 1) //start the tracking proceduring
@@ -1079,18 +1077,20 @@ int main () {
 
 				//(1)a send 1 unsigned long on the size of the path bitstream
 				buf = save.getPathStreamSize();
-				if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
+				if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR)
+				{
 					fprintf(stderr, "Error sending Depth size : %d\n", WSAGetLastError());
 					exit(-1);
 				}
 
-
 				/*(1)b send the path mat to the server*/
 				char *bitstream = save.getPathStream();
 				unsigned long dataLeft = buf;
-				while (dataLeft > 0) {
+				while (dataLeft > 0)
+				{
 					bytecount = send(csock, bitstream, dataLeft, 0);
-					if (bytecount == SOCKET_ERROR) {
+					if (bytecount == SOCKET_ERROR)
+					{
 						fprintf(stderr, "Error sending Depth bitstream : %d\n", WSAGetLastError());
 						exit(-1);
 					}
@@ -1104,11 +1104,11 @@ int main () {
 
 			// (2) Send 1 unsigned long on the size of the JPEG bitstream
 			buf = save.getJPEGSize();
-			if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR) {
+			if ((bytecount = send(csock, (char *)&buf, sizeof(unsigned long), 0)) == SOCKET_ERROR)
+			{
 				fprintf(stderr, "Error sending JPEG size : %d\n", WSAGetLastError());
 				exit(-1);
 			}
-
 
 			//save.Stop();
 			//if (save.count > 300)
@@ -1118,7 +1118,8 @@ int main () {
 			//}
 		}
 		char c = cv::waitKey(5);
-		if (c == 27) break;
+		if (c == 27)
+			break;
 	}
 
 	save.Stop();

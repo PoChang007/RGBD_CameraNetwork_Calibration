@@ -39,32 +39,31 @@ using namespace cv;
 class KinectGrabber
 {
 public:
-
 	KinectGrabber(const int instance = 0);
-	//const Mode& depth_mode = OpenNI_Default_Mode,
-	//const Mode& image_mode = OpenNI_Default_Mode);
+	// const Mode& depth_mode = OpenNI_Default_Mode,
+	// const Mode& image_mode = OpenNI_Default_Mode);
 
 	/** \brief virtual Destructor inherited from the Grabber interface. It never throws. */
-	~KinectGrabber() throw ();
+	~KinectGrabber() throw();
 
 	/** \brief Start the data acquisition. */
 	void
-		start();
+	start();
 
 	/** \brief Stop the data acquisition. */
 	void
-		stop();
+	stop();
 
 	/** \brief Check if the data acquisition is still running. */
 	bool
-		isRunning() const;
+	isRunning() const;
 
 	std::string
-		getName() const;
+	getName() const;
 
 	/** \brief Obtain the number of frames per second (FPS). */
 	float
-		getFramesPerSecond() const;
+	getFramesPerSecond() const;
 
 	//Kinect Camera Settings
 	bool CameraSettingsSupported;
@@ -76,7 +75,7 @@ public:
 
 	//Used internally, do not call!
 	void ProcessThreadInternal();
-	cv::Mat ConvertMat(const RGBQUAD* pBuffer, int nWidth, int nHeight);
+	cv::Mat ConvertMat(const RGBQUAD *pBuffer, int nWidth, int nHeight);
 
 protected:
 	//int indexc = 0;
@@ -85,27 +84,27 @@ protected:
 	unsigned char b, g, r;
 	bool m_depthStarted, m_videoStarted, m_audioStarted, m_infraredStarted, m_person, m_preregistered;
 	// Current Kinect
-	IKinectSensor*          m_pKinectSensor;
+	IKinectSensor *m_pKinectSensor;
 
 	//IColorFrameReader*      m_pColorFrameReader;
-	ICoordinateMapper*      m_pCoordinateMapper;
-	IMultiSourceFrameReader*m_pMultiSourceFrameReader;
+	ICoordinateMapper *m_pCoordinateMapper;
+	IMultiSourceFrameReader *m_pMultiSourceFrameReader;
 
-	static const int        cColorWidth = 1920;
-	static const int        cColorHeight = 1080;
-	static const int        cDepthWidth = 512;
-	static const int        cDepthHeight = 424;
+	static const int cColorWidth = 1920;
+	static const int cColorHeight = 1080;
+	static const int cDepthWidth = 512;
+	static const int cDepthHeight = 424;
 	cv::Size m_colorSize, m_depthSize;
-	RGBQUAD* m_pColorRGBX;
+	RGBQUAD *m_pColorRGBX;
 	UINT16 *m_pDepthBuffer;
 	//std::vector<UINT16> m_pDepthBuffer;
 
 	std::vector<UINT16> depthBuffer;
 	std::vector<RGBQUAD> colorBuffer;
-	cv::Mat m_colorImage, m_depthImage,m_RGBImage,colorImg;
+	cv::Mat m_colorImage, m_depthImage, m_RGBImage, colorImg;
 	cv::Mat bufferMat;
 	std::vector<cv::Point3f> l_pts;
-	std::vector<cv::Point3f> l_ptstempp; 
+	std::vector<cv::Point3f> l_ptstempp;
 
 	cv::Mat PointCloud_X;
 	cv::Mat PointCloud_Y;
@@ -115,11 +114,10 @@ protected:
 	cv::Mat PointCloud_Y_temp;
 	cv::Mat PointCloud_Z_temp;
 
-
 #define COLOR_PIXEL_TYPE CV_8UC4
 #define DEPTH_PIXEL_TYPE CV_16UC1
 
-	HANDLE hStopEvent, hKinectThread, hDepthMutex, hColorMutex, hCloudMutex,hRGBMutex;
+	HANDLE hStopEvent, hKinectThread, hDepthMutex, hColorMutex, hCloudMutex, hRGBMutex;
 	bool m_depthUpdated, m_colorUpdated, m_infraredUpdated, m_skeletonUpdated;
 	LONGLONG m_rgbTime, m_depthTime, m_infraredTime;
 

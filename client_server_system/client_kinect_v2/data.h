@@ -1,4 +1,4 @@
-// Copyright 2017 University of Kentucky 
+// Copyright 2017 University of Kentucky
 // Po-Chang Su, Ju Shen, Wanxin Xu, Sen-ching Samson Cheung, Ying Luo
 
 #include <stdio.h>
@@ -14,7 +14,6 @@ using namespace std;
 #define CLIENTID 1
 int save_index = 0;
 
-
 /*Create the local file*/
 char path_file[200];
 ofstream out_txt;
@@ -26,14 +25,14 @@ int total_num;
 cv::Mat path_mat;
 cv::Mat sphere_center_total[NUMBER];
 std::vector<float> radius_total;
-std::vector<std::vector<cv::Point3f>> cloud_l_imgs/*[NUMBER]*/;
+std::vector<std::vector<cv::Point3f>> cloud_l_imgs /*[NUMBER]*/;
 
 std::vector<cv::Point2i> r_blob;
 std::vector<cv::Point2i> l_blob;
 std::vector<cv::Point3f> cloudtemp;
 std::vector<cv::Point3f> b;
 cv::Mat mean_cloud;
-std::vector<cv::Point3f> l_pts, r_pts ,final_pts;
+std::vector<cv::Point3f> l_pts, r_pts, final_pts;
 
 cv::Mat rgb_l_imgs;
 cv::Mat PointCloudX;
