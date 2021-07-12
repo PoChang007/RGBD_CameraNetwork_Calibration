@@ -1,4 +1,4 @@
-# Demo - Camera Network Calibration for 3D Scene Rendering
+# Camera Network Calibration for 3D Scene Rendering
 
 This demo shows how to calibrate a wide-baseline camera network for 3D scene rendering.  
 By using a sphere ball with RGB-D data captured by each camera, the sphere center in each frame can be estimated.  
