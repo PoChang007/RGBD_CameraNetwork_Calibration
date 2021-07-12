@@ -84,12 +84,6 @@ float T41[] = {1126.64, 520.916, 945.361};
 
 #endif
 
-cv::Mat depth_pixels_scalar;	  //stores the camera coordinate after color_inverse * depth_pixels
-cv::Mat depth_pixels_scalar_tran; //The transpose matrix of depth_pixels_scalar
-
-cv::Mat color_inverse(3, 3, CV_32F);
-cv::Mat depth_pixels(3, WIDTH *HEIGHT, CV_32F);
-
 /*For extrinsic calibration use*/
 
 cv::Mat path_mat[Client_Total]; //the path list received from each client
