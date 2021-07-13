@@ -6,9 +6,9 @@ Environment:
 
   * Windows 10
   * Visual Studio 2013 (release mode)
-  * OpenCV 2.4.10 
-  * Kinect v2 SDK
-  * OpenGL
+  * [OpenCV 2.4.10](https://sourceforge.net/projects/opencvlibrary/files/opencv-win/2.4.10/) 
+  * [Kinect v2 SDK](https://www.microsoft.com/en-us/download/details.aspx?id=44561)
+  * [OpenGL](INSTALLATION.md)
 
 For camera calibration, a sphere ball in yellow color is required. the default radius of the sphere ball is 20.3(cm).
 

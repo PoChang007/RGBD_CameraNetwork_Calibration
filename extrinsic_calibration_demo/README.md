@@ -7,7 +7,7 @@ The calibrated camera network can combine the field of view from each camera to 
 
 | 3D indoor scene rendering                             | Estimations of camera pose and sphere location                     |
 |:-----------------------------------------------------:|:------------------------------------------------------------------:|
-|<img src="src/doc/3D_scene_rendering.png" width="400"> |<img src="src/doc/camera_pose_and_sphere_location.png" width="400"> |
+|<img src="src/doc/3D_scene_rendering.png" width="400" height="250"> |<img src="src/doc/camera_pose_and_sphere_location.png" width="400" height="250"> |
 <hr>
 
 ## Dependencies for Running Locally (Linux)
@@ -63,7 +63,7 @@ Each sphere center in 3D is rendered by `DrawSphereIn3DSpace`, in 2D is `DrawSph
 
 |Field of view rendered by different color for each camera| Switch off the 3rd camera |
 |:-------------------------------------------------------:|:-------------------------:|
-|<img src="src/doc/render_with_single_color.png" width="400"> | <img src="src/doc/third_camera_switch_off.png" width="400"> | 
+|<img src="src/doc/render_with_single_color.png" width="400" height="250"> | <img src="src/doc/third_camera_switch_off.png" width="400" height="250"> | 
 <hr>
 
 ## Programming Details
