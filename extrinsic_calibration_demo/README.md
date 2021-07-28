@@ -19,7 +19,7 @@ The calibrated camera network can combine the field of view from each camera to 
   * The OpenCV 4.1.0 source code can be found [here](https://github.com/opencv/opencv/tree/4.1.0)
 * gcc/g++ >= 5.4
   * Linux: gcc / g++ is installed by default on most Linux distros
-* PCL 1.2
+* PCL >= 1.2
   * Download PCL [here](https://pointclouds.org/downloads/)
 
 ## Basic Build Instructions
@@ -57,6 +57,7 @@ After the camera network calibration processing is done, in 3D viewer,
 * Press `1`, `2`, or `3` to switch on/off each camera view (point cloud rendering mode)
 * Press `a` to switch on/off the mode that renders the locations of estimated sphere center 
 * Press `r` to change point cloud viewer to a top-down view
+* Press `e` to end the 3D viewer
 
 Each camera pose is rendered by `DrawCameraFrustum`.  
 Each sphere center in 3D is rendered by `DrawSphereIn3DSpace`, in 2D is `DrawSphereCenterIn2DImage`.  

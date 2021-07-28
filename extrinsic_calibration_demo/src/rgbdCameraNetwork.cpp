@@ -60,7 +60,7 @@ int main()
 	std::string textID = "Image_number_text";
 	bool switchFlag = PointCloudRendering;
 	int sphere_counter = 0;
-	while (frameCounter <= final_number)
+	while (!viewer->wasStopped())
 	{
 		if (frameCounter == 0)
 		{
