@@ -11,6 +11,7 @@ The calibrated camera network can combine the field of view from each camera to 
 <hr>
 
 ## Dependencies for Running Locally (Linux)
+
 * cmake >= 2.8
   * [click here for installation instructions](https://cmake.org/install/)
 * make >= 4.1
@@ -91,3 +92,7 @@ Each sphere center in 3D is rendered by `DrawSphereIn3DSpace`, in 2D is `DrawSph
 
 * `std::async` is used in `CalibrationHandler::StartProcessing()` to detect sphere center based on RGB-D images captured from each camera. The images in each camera will be processed in different thread 
 * When a thread finishes the task of sphere center detection, the function `CalibrationHandler::StoreClientInfo` is called and will store the necessary data in `CalibrationHandler::cameras` for the use of extrinsic estimation, and then print the detection complete message. A lock guard is used to prevent data race between threads if they try to save the data into `CalibrationHandler::cameras` at the same time
+
+## License
+
+The extrinsic calibration demo project is released under the [MIT License](LICENSE.md).
