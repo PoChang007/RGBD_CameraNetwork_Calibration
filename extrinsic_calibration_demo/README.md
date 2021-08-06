@@ -20,7 +20,7 @@ The calibrated camera network can combine the field of view from each camera to 
   * The OpenCV 4.1.0 source code can be found [here](https://github.com/opencv/opencv/tree/4.1.0)
 * gcc/g++ >= 5.4
   * Linux: gcc / g++ is installed by default on most Linux distros
-* PCL >= 1.2
+* PCL >= 1.7
   * Download PCL [here](https://pointclouds.org/downloads/)
 
 ## Basic Build Instructions
