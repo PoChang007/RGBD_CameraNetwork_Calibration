@@ -3,7 +3,7 @@
 ### Loops, Functions, I/O
 
 * The `SphereTracking` class consists of several functions for sphere center detection: `LoadImage`, `Compute3Dpoints`, `ComputeSpehereCenter`, `SphereFitting`, etc. In `ThreeDViewerClass`, `if else` is used in `DrawSphereIn3DSpace` function to draw the sphere center in different color from different color based on the given index 
-* Color and depth images are read for sphere center detection and 3D point cloud rendering. The estimated sphere center locations and transformation matrices are written into .txt. files. See [File Structure section](#File-Structure)
+* Color and depth images are read for sphere center detection and 3D point cloud rendering. The estimated sphere center locations and transformation matrices are written into .txt. files. See [File Structure section](./README.md#file-structure)
 
 ### Object Oriented Programming
 
