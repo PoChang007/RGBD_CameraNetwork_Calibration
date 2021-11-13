@@ -1,24 +1,25 @@
-## Programming Details
+## Documentation
 
-### Loops, Functions, I/O
+### [SphereTracking](./src/sphereTracking.cpp)
 
-* The `SphereTracking` class consists of several functions for sphere center detection: `LoadImage`, `Compute3Dpoints`, `ComputeSpehereCenter`, `SphereFitting`, etc. In `ThreeDViewerClass`, `if else` is used in `DrawSphereIn3DSpace` function to draw the sphere center in different color from different color based on the given index 
-* Color and depth images are read for sphere center detection and 3D point cloud rendering. The estimated sphere center locations and transformation matrices are written into .txt. files. See [File Structure section](./README.md#file-structure)
+* `LoadImage`: load pre-stored images captured by the camera `n` in the camera network
+* `SphereCenterDetection`: find the sphere region in color image, then back-project corresponding pixels in depth image to 3D space for sphere center detection
 
-### Object Oriented Programming
+### [CalibrationHandler](./src/calibrationHandler.cpp)
 
-* All class data members are explicitly specified as public or private. Some private data can be obtained by using public getter function
-* `SphereTracking` class constructor utilizes member initialization lists
-* Functions and data related to sphere tracking are grouped into `SphereTracking` class. Invariant data `_estimated_radius` is hidden from the user `CalibrationHandler`
+* `StartProcessing`: start the sphere tracking process asynchronously with each image sequence
+* `CalculateCameraExtrinsics`: calculate extrinsics between camera `n` and the reference camera
+* `LoadPath`: load estimated sphere center positions
+* `CorrespondenceBuild`: get the corresponding pairs between two cameras
 
-### Memory Management
+### [ThreeDViewer](./src/threeDViewer.cpp)
 
-* In `ThreeDViewer` class, functions `DrawSphereCenterIn2DImage` and `DrawSphereIn3DSpace` use pass-by-reference for arguments `cam_index` and `frameCounter`
-* All of the classes in the project use destructors to deallocate OpenCV matrix
-* In CalibrationHandler.cpp, the function `StartProcessing` uses std::move to move the smart pointer (to `SphereTracking`) to the thread
-* The smart pointers are used in `rgbdCameraNetwork.cpp` and `CalibrationHandler.cpp` for 3D scene rendering handler and camera calibration handler
+* `SetUpPointClouds`: transform 3D points captured by camera `n` to the world coordinate
+* `DrawCameraFrustum`: draw the frustum of camera `n` in the world coordinate
+* `DrawSphereCenterIn2DImage`: draw the sphere center position in 2D image
+* `DrawSphereIn3DSpace`: draw the sphere center position in the world coordinate. Sphere centers drawn in different colors represents they are from different cameras
 
-### Concurrency
+### Others
 
-* `std::async` is used in `CalibrationHandler::StartProcessing()` to detect sphere center based on RGB-D images captured from each camera. The images in each camera will be processed in different thread 
-* When a thread finishes the task of sphere center detection, the function `CalibrationHandler::StoreClientInfo` is called and will store the necessary data in `CalibrationHandler::cameras` for the use of extrinsic estimation, and then print the detection complete message. A lock guard is used to prevent data race between threads if they try to save the data into `CalibrationHandler::cameras` at the same time
+* Color and depth images are used in sphere center detection and 3D point cloud rendering. The estimated sphere center positions and transformation matrices are written into .txt. files. See [File Structure section](./README.md#file-structure)
+* The default value of the sphere radius (`_estimated_radius`) is 203cm

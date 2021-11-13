@@ -45,7 +45,7 @@ Given RGB-D images from each camera (three cameras here), the program will first
 | Class Name         | Description                               |
 |--------------------|-------------------------------------------|
 | CalibrationHandler | This class is used to initialize multi-threaded processing for sphere center detection from each camera and calculate extrinsics between cameras |
-| SphereTracking     | This class is used to detect the sphere center based on RGB-D images |
+| SphereTracking     | This class is for recognizing the sphere center in the RGB-D image |
 | ThreeDViewer       | This class is for visualization, including 3D point cloud rendering and 2D/3D sphere center visualization |
 
 The program's interface, `rgbdCameraNetwork.cpp`, is used to start the process of camera network calibration. The calibration results are rendered in the 3D viewer. The controllable functions are described below:  
@@ -68,7 +68,7 @@ Each sphere center in 3D is rendered by `DrawSphereIn3DSpace`, in 2D is `DrawSph
 |<img src="src/doc/render_with_single_color.png" width="400" height="250"> | <img src="src/doc/third_camera_switch_off.png" width="400" height="250"> | 
 <hr>
 
-## [Programming Docs](documentation.md)
+## [Documentation](documentation.md)
 
 ## License
 
