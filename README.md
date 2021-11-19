@@ -9,3 +9,6 @@ A fast and robust wide-baseline RGB-D camera network calibration using a sphere 
 ## Cloning the repo
 
 * `git clone https://github.com/PoChang007/RGBD_CameraNetwork_Calibration.git`
+
+<img src="camera_network_calibration_3d_rendering.gif" width="500">
+<hr>
