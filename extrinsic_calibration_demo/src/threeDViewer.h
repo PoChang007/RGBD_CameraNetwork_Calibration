@@ -1,9 +1,6 @@
 #ifndef THREEDVIEWER_H_
 #define THREEDVIEWER_H_
 
-#include <opencv2/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <pcl/visualization/pcl_visualizer.h>
 #include "calibrationHandler.h"
 
