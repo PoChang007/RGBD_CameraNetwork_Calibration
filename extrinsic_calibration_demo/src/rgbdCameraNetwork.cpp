@@ -2,7 +2,6 @@
 #include <fstream>
 #include <thread>
 #include "calibrationHandler.h"
-#include "threeDViewer.h"
 
 std::vector<bool> RenderCam{true, true, true};
 bool SingleColorMode = false;

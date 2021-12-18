@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "sphereTracking.h"
+#include "threeDViewer.h"
 
 class CalibrationHandler : public std::enable_shared_from_this<CalibrationHandler>
 {
